@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">MPSolve for Android</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="insert_a_polynomial">Insert a polynomial:</string>
+    <string name="solve">Solve</string>
+
+</resources>
