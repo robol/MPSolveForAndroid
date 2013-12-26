@@ -15,9 +15,7 @@ public class PolynomialSolver {
 		// TODO: Actually load MPSolve here
 	}
 	
-	public native String nativeTest();
-	
-	public native Array nativeSolvePolynomial(String input);
+	public native String[] nativeSolvePolynomial(String input);
 	
 	/** 
 	 * Solve a polynomial. 
@@ -27,9 +25,8 @@ public class PolynomialSolver {
 	 * @return true if the polynomial could be parsed, false otherwise. 
 	 */
 	public boolean solvePolynomial (String polynomial) {
-		// Assume that the polynomial is x^20 - 1, for the 
-		// moment being. 
-		
+		// Assume that the polynomial is x^4 - 1, for the 
+		// moment being. 		
 		return false; 
 	}
 	

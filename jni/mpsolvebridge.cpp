@@ -1,12 +1,6 @@
 #include "mpsolvebridge.h"
 #include <mps/mps.h>
 
-jstring Java_it_unipi_dm_mpsolve_android_PolynomialSolver_nativeTest
-(JNIEnv* env, jobject javaThis)
-{
-	return env->NewStringUTF("Hello world from native code :)");
-}
-
 jobjectArray Java_it_unipi_dm_mpsolve_android_PolynomialSolver_nativeSolvePolynomial
 (JNIEnv * env, jobject javaThis, jstring polynomial)
 {

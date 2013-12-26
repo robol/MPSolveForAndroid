@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.Button;
 
 public class MainActivity extends Activity {
@@ -26,13 +27,21 @@ public class MainActivity extends Activity {
         return true;
     }
     
-    public void onSolveButtonClicked (View view) { 
-    	Array test = solver.nativeSolvePolynomial("Test");     	
+    public void onSolveButtonClicked (View view) {     	
     	Log.d("MPSolve", "User has asked to solve a polynomial");
     	
-    	// Assume that the polynomial is x^4 - 1, for the moment being. 
-    	Button solveButton = (Button) findViewById(R.id.solveButton);
-    	solveButton.setText(solver.nativeTest());
+    	WebView webView = (WebView) findViewById(R.id.approximationsWebView);    	
+    	String[] roots = solver.nativeSolvePolynomial("Test");
+    	
+    	String approximationList = "<html><body> <ul>"; 
+    	
+    	for (int i = 0; i < 4; i++) { 
+    		approximationList += "<li>" + roots[i] + "</li>"; 
+    	}
+    	
+    	approximationList += "</ul></body></html>";
+    	
+    	webView.loadData(approximationList, "text/html", null);
     }
     
 }
