@@ -21,6 +21,7 @@ LOCAL_MODULE    := libmpsolvebridge
 LOCAL_SRC_FILES := mpsolvebridge.cpp
 # LOCAL_LDLIBS += ../mpsolve/android-ext-arm-linux-androideabi-4.8/lib/libmps.a
 # LOCAL_LDLIBS += ../mpsolve/android-ext-arm-linux-androideabi-4.8/lib/libgmp.a
+LOCAL_LDLIBS += -llog
 LOCAL_STATIC_LIBRARIES := libmps libgmp
 
 include $(BUILD_SHARED_LIBRARY)
