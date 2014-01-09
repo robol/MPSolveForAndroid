@@ -46,10 +46,15 @@ RootsRenderer.prototype.switchView = function () {
 }
 
 RootsRenderer.prototype.writeRoots = function () {
-  list_html = "<ul>";
+  list_html = "<h2>List of approximations</h2><ul>";
 
   for (i = 0; i < this.points.length; i++) {
-    list_html += "  <li> (" + this.points[i][0] + ", " + this.points[i][1]  + ") </li>"; 
+    var sep = "+"; 
+    if (this.points[i][1] < 0)
+      sep = "";
+
+    list_html += "  <li>" + this.points[i][0] + sep + 
+       this.points[i][1]  + "i </li>"; 
   }
 
   list_html += "</ul>"; 

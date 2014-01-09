@@ -12,13 +12,12 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0" >
+        android:layout_height="wrap_content" >
 
         <EditText
             android:id="@+id/polyEditText"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
             android:layout_weight="1"
             android:ems="10"
             android:hint="@string/insert_a_polynomial" >
@@ -29,17 +28,16 @@
         <Button
             android:id="@+id/solveButton"
             android:layout_width="200dp"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:text="@string/solve" 
-            android:onClick="onSolveButtonClicked" />
+            android:onClick="onSolveButtonClicked"
+            android:text="@string/solve" />
 
     </LinearLayout>
 
     <it.unipi.dm.mpsolve.android.RootsRendererView
         android:id="@+id/approximationsWebView"
         android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:layout_weight="1" />
+        android:layout_height="fill_parent" />
 
 </LinearLayout>

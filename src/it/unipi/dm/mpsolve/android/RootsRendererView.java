@@ -9,15 +9,26 @@ import android.view.MotionEvent;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.support.v4.view.MotionEventCompat;
 
 public class RootsRendererView extends WebView {
 	
 	private GestureDetector gestureDetector;
+	
+	public RootsRendererView(Context context) {
+		super(context);
+		setupWebView();
+	}
 
-	@SuppressLint("SetJavaScriptEnabled")
 	public RootsRendererView(Context context, AttributeSet set) {
 		super(context, set);
+		setupWebView();	
+	}
+
+	@SuppressLint("SetJavaScriptEnabled")	
+	private void setupWebView() {
+		
+		if (isInEditMode())
+			return;
 		
     	WebSettings webSettings = getSettings();
     	webSettings.setJavaScriptEnabled(true);
