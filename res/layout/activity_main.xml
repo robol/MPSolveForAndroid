@@ -36,7 +36,7 @@
 
     </LinearLayout>
 
-    <WebView
+    <it.unipi.dm.mpsolve.android.RootsRendererView
         android:id="@+id/approximationsWebView"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"

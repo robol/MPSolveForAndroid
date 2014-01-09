@@ -1,13 +1,9 @@
 package it.unipi.dm.mpsolve.android;
 
-import java.lang.reflect.Array;
-
 public class PolynomialSolver {
 	
 	static {
 		System.loadLibrary("stlport_shared");
-		/* System.loadLibrary("gmp"); 
-		System.loadLibrary("mps"); */
 		System.loadLibrary("mpsolvebridge");
 	}
 
