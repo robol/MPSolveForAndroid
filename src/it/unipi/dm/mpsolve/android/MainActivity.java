@@ -1,17 +1,12 @@
 package it.unipi.dm.mpsolve.android;
 
 import android.os.Bundle;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
 import android.widget.EditText;
 
-@SuppressLint("SetJavaScriptEnabled")
 public class MainActivity extends Activity {
 	
 	private PolynomialSolver solver = new PolynomialSolver();

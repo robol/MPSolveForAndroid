@@ -4,11 +4,16 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.support.v4.view.MotionEventCompat;
 
 public class RootsRendererView extends WebView {
+	
+	private GestureDetector gestureDetector;
 
 	@SuppressLint("SetJavaScriptEnabled")
 	public RootsRendererView(Context context, AttributeSet set) {
@@ -27,6 +32,68 @@ public class RootsRendererView extends WebView {
     	
     	// Load our custom RootsRenderer implemented in HTML + js
     	loadUrl("file:///android_asset/rootsrenderer.html");
+    	
+    	setupGestureDetector();		
+	}
+	
+	private void switchView() {
+		loadUrl("javascript:$.rootsRenderer.switchView()");
+	}
+	
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+	    gestureDetector.onTouchEvent(event);		
+		return true;		
+	}
+	
+	@Override
+	public boolean onInterceptTouchEvent(MotionEvent event) {
+		return gestureDetector.onTouchEvent(event);
+	}
+	
+	private void setupGestureDetector() {
+    	gestureDetector = new GestureDetector(getContext(), 
+    			new GestureDetector.OnGestureListener() {
+			@Override
+			public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+					float velocityY) {
+				if (Math.abs(velocityX) > Math.abs(velocityY)) {
+					switchView();
+				}
+				return false;
+			}
+
+			@Override
+			public boolean onDown(MotionEvent e) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+
+			@Override
+			public void onLongPress(MotionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public boolean onScroll(MotionEvent e1, MotionEvent e2,
+					float distanceX, float distanceY) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+
+			@Override
+			public void onShowPress(MotionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public boolean onSingleTapUp(MotionEvent e) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+    	});		
 	}
 	
     /**
