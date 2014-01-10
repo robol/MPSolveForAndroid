@@ -76,16 +76,24 @@ public class RootsRendererView extends WebView {
     		@Override
     		public void onPageStarted(WebView view, String url, Bitmap favicon) {
     			loadingPage = true;
-    			loadingProgressDialog = ProgressDialog.show(getContext(), "Rendering", 
-    					"MPSolve is loading the approximation renderer. Please wait...");    			
+    			
+    			// We only need this in non landscape mode. 
+    			if (! Utils.isLandscape(getContext()))
+    				loadingProgressDialog = ProgressDialog.show(getContext(), 
+    						"Rendering", 
+    						"MPSolve is loading the approximation renderer. Please wait...");    			
     		}
     		
     		public void onPageFinished(WebView view, String url) {
     			loadingPage = false;
     			
     			// Reload points in every case. 
-    			inflatePoints(adapter.roots);    			
-    			loadingProgressDialog.dismiss();
+    			inflatePoints(adapter.roots);
+    			
+    			if (loadingProgressDialog != null) {
+        			loadingProgressDialog.dismiss();    				
+        			loadingProgressDialog = null;
+    			}
     		}
     	});
     	
@@ -104,8 +112,6 @@ public class RootsRendererView extends WebView {
     public void inflatePoints(String[] points) {
     	if (points == null)
     		return;
-    	
-    	Log.d("MPSolve", "inflatePoints() called : loadingPage = " + loadingPage);
     	
     	if (! loadingPage) {
 	    	loadUrl("javascript:$.rootsRenderer.clear()");

@@ -71,13 +71,8 @@ public class MainActivity extends FragmentActivity {
     	}
     }
     
-    public boolean isLandscape() {
-    	return (getResources().getConfiguration().orientation == 
-    				Configuration.ORIENTATION_LANDSCAPE);
-    }
-    
     public void loadRootsRenderer() {
-    	if (isLandscape()) {
+    	if (Utils.isLandscape(this)) {
     		return;
     	}
     	
@@ -100,7 +95,7 @@ public class MainActivity extends FragmentActivity {
     }
     
     public void loadRootsList() {
-    	if (isLandscape()) {
+    	if (Utils.isLandscape(this)) {
     		return;
     	}
     	
