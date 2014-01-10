@@ -1,10 +1,8 @@
 package it.unipi.dm.mpsolve.android;
 
 import java.util.ArrayList;
-
 import android.content.Context;
 import android.database.DataSetObserver;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,8 +32,9 @@ public class RootsAdapter implements ListAdapter {
 		radius = null;
 	}
 	
-	public void setPoints(String[] points) {
+	public void setPoints(String[] points, String[] radii) {
 		roots = points;
+		radius = radii;
 		
 		for (DataSetObserver o : observers) {
 			o.onChanged();
@@ -79,13 +78,15 @@ public class RootsAdapter implements ListAdapter {
 			v = getInflater().inflate(R.layout.root_view, null);
 		}
 		
-		Log.d("MPSolve", "position = " + position + ", root = " + roots[position]);
+		// Fill in the text in the TextViews that we are using for the
+		// List Element. 
+		// TODO: Handle also the status of the approximations. 
 		
 		TextView rootText = (TextView) v.findViewById(R.id.rootText);
 		rootText.setText(roots[position]);
 		
 		TextView radiusText = (TextView) v.findViewById(R.id.radiusText);
-		radiusText.setText("Radius: not implemented");		
+		radiusText.setText("Radius: " + radius[position]);		
 		
 		return v;
 	}

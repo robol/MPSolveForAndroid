@@ -62,6 +62,8 @@ public class RootsRendererView extends WebView {
     	WebSettings webSettings = getSettings();
     	webSettings.setJavaScriptEnabled(true);
     	
+    	setPadding(0, 0, 0, 0);
+    	
     	setWebChromeClient(new WebChromeClient() {
     		  public void onConsoleMessage(String message, int lineNumber, String sourceID) {
     		    Log.d("MPSolve", message + " -- From line "

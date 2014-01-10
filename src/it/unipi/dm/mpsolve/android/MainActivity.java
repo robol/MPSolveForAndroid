@@ -1,6 +1,7 @@
 package it.unipi.dm.mpsolve.android;
 
 import android.support.v4.app.FragmentTransaction;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -23,20 +24,19 @@ public class MainActivity extends FragmentActivity {
 	private PolynomialSolver solver = new PolynomialSolver();
 	public String[] points = new String[0];
 	
-	public RootsAdapter rootsAdapter;
-	
 	private GestureDetector gestureDetector;
-	
+	public RootsAdapter rootsAdapter;
 	private State currentState = State.NONE;
 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        rootsAdapter = new RootsAdapter(getApplicationContext());
         setupGestureDetector();
         
+        rootsAdapter = ApplicationData.getRootsAdapter(this);
+        
         setContentView(R.layout.activity_main);
+        
         loadRootsRenderer();
     }
 
@@ -52,13 +52,35 @@ public class MainActivity extends FragmentActivity {
 
     	EditText polyLineEdit = (EditText) findViewById(R.id.polyEditText);
     	
-    	points = solver.nativeSolvePolynomial(
-    			 polyLineEdit.getText().toString());
+    	points = solver.solvePolynomial(polyLineEdit.getText().toString());
     	
-    	rootsAdapter.setPoints(points);
+    	if (points.length == 0) {
+    		// TODO: Warn the user about the fact that polynomial solving has
+    		// failed. 
+    	}
+    	else {
+    		String[] roots = new String[points.length / 2];
+    		String[] radii = new String[points.length / 2];
+    		
+    		for (int i = 0; i < roots.length; i++) {
+    			roots[i] = points[2*i];
+    			radii[i] = points[2*i + 1];
+    		}
+    		
+    		rootsAdapter.setPoints(roots, radii);
+    	}
+    }
+    
+    public boolean isLandscape() {
+    	return (getResources().getConfiguration().orientation == 
+    				Configuration.ORIENTATION_LANDSCAPE);
     }
     
     public void loadRootsRenderer() {
+    	if (isLandscape()) {
+    		return;
+    	}
+    	
     	Log.d("MPSolve", "Loading RootsRenderer");
     	currentState = State.ROOTSRENDERER;
     	
@@ -72,10 +94,16 @@ public class MainActivity extends FragmentActivity {
     	}
     	
     	ft.replace(R.id.approximationFrame, rootsRenderer, "RootsRenderer");
+    	
+    	// ft.addToBackStack(null);
     	ft.commit();
     }
     
     public void loadRootsList() {
+    	if (isLandscape()) {
+    		return;
+    	}
+    	
     	Log.d("MPSolve", "Loading Roots list");
     	currentState = State.ROOTLIST;
     	
@@ -87,11 +115,10 @@ public class MainActivity extends FragmentActivity {
     	if (rootsFragment == null)
     		rootsFragment = new RootsListFragment();
     	
-    	Log.d("MPSolve", "rootsFragment = " + rootsFragment);
-    	
     	ft.replace(R.id.approximationFrame, rootsFragment, 
     			"RootsList");
     	
+    	// ft.addToBackStack(null);    	
     	ft.commit();
     }
     

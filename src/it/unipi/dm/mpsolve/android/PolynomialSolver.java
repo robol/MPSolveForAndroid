@@ -6,24 +6,19 @@ public class PolynomialSolver {
 		System.loadLibrary("stlport_shared");
 		System.loadLibrary("mpsolvebridge");
 	}
-
-	public PolynomialSolver() {
-		// TODO: Actually load MPSolve here
-	}
 	
-	public native String[] nativeSolvePolynomial(String input);
+	private native String[] nativeSolvePolynomial(String input);
 	
 	/** 
 	 * Solve a polynomial. 
 	 * 
 	 * @param polynomial is a string representing the polynomial 
 	 * to solve. 
-	 * @return true if the polynomial could be parsed, false otherwise. 
+	 * @return An array of strings containing the approximation and the 
+	 * radii in odd and even positions, respectively.  
 	 */
-	public boolean solvePolynomial (String polynomial) {
-		// Assume that the polynomial is x^4 - 1, for the 
-		// moment being. 		
-		return false; 
+	public String[] solvePolynomial (String polynomial) {
+		return nativeSolvePolynomial(polynomial);  
 	}
 	
 }

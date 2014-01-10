@@ -15,12 +15,9 @@ public class RootsRendererFragment extends Fragment {
 		View rootsRenderer = inflater.inflate(
 				R.layout.roots_renderer_fragment, null);
 		
-		MainActivity activity = (MainActivity) getActivity();
-		
-		// Inflate the RootsAdapter in the View.
 		((RootsRendererView) rootsRenderer.findViewById(R.id.rootsRendererView1)).
-			setRootsAdapter(activity.rootsAdapter);
-		
+		    setRootsAdapter(ApplicationData.getRootsAdapter(getActivity()));
+
 		return rootsRenderer;
 	}
 	
