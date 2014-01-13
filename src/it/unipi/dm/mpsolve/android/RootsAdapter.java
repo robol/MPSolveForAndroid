@@ -6,6 +6,7 @@ import android.database.DataSetObserver;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
@@ -15,11 +16,6 @@ public class RootsAdapter implements ListAdapter {
 	 * @brief Application Context. 
 	 */
 	private Context context;
-	
-	/**
-	 * @brief Application LayoutInflater. 
-	 */
-	private LayoutInflater inflater = null;
 	
 	private ArrayList<DataSetObserver> observers = new ArrayList<DataSetObserver>(0);
 	
@@ -60,27 +56,26 @@ public class RootsAdapter implements ListAdapter {
 	public int getItemViewType(int position) {
 		return 0;
 	}
-	
-	private LayoutInflater getInflater() {
-		if (inflater == null) {
-			inflater = (LayoutInflater) context.getSystemService
-					(Context.LAYOUT_INFLATER_SERVICE);
-		}
-		
-		return inflater;
-	}
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View v = convertView;
 		
-		if (v == null) {			
-			v = getInflater().inflate(R.layout.root_view, null);
+		if (v == null) {
+			LayoutInflater inflater = (LayoutInflater) context.getSystemService(
+					Context.LAYOUT_INFLATER_SERVICE); 			
+			v = inflater.inflate(R.layout.root_view, null);
 		}
 		
-		// Fill in the text in the TextViews that we are using for the
-		// List Element. 
-		// TODO: Handle also the status of the approximations. 
+		LinearLayout root = (LinearLayout) v.findViewById(R.id.rootViewRoot);
+		
+		// Decide the color based on even odd positions. 
+		if (position % 2 == 0)
+			root.setBackgroundColor(
+					context.getResources().getColor(R.color.list_even_background));
+		else
+			root.setBackgroundColor(
+					context.getResources().getColor(R.color.list_odd_background));
 		
 		TextView rootText = (TextView) v.findViewById(R.id.rootText);
 		rootText.setText(roots[position]);

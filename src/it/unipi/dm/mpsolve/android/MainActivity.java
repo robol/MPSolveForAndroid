@@ -1,11 +1,9 @@
 package it.unipi.dm.mpsolve.android;
 
 import android.support.v4.app.FragmentTransaction;
-import android.content.res.Configuration;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
@@ -14,6 +12,9 @@ import android.view.View;
 import android.widget.EditText;
 
 public class MainActivity extends FragmentActivity {
+	
+	public String ROOTS_LIST_TAG = "RootsList";
+	public String ROOTS_RENDERER_TAG = "RootsRenderer";
 	
 	private enum State {
 		NONE,
@@ -27,18 +28,68 @@ public class MainActivity extends FragmentActivity {
 	private GestureDetector gestureDetector;
 	public RootsAdapter rootsAdapter;
 	private State currentState = State.NONE;
+	
+	private RootsListFragment rootsListFragment;
+	private RootsRendererFragment rootsRendererFragment;
 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupGestureDetector();
         
-        rootsAdapter = ApplicationData.getRootsAdapter(this);
+		
+		Log.d("MPSolve", "Loading the the Fragments for the application");
+        if (savedInstanceState == null || true) {
+        	rootsListFragment = new RootsListFragment();
+        	rootsRendererFragment = new RootsRendererFragment();
+        }
+        	
+        // TODO: We should be able to recover the Fragments from the
+       	// other layout, but it currently doesn't work due to reparenting
+        // issues that I haven't worked out. 
         
+        rootsAdapter = ApplicationData.getRootsAdapter(this);        
         setContentView(R.layout.activity_main);
         
-        loadRootsRenderer();
+        // Handle the loading of the contents based on the 
+        // current Layout of the Device. 
+        loadContent();
     }
+	
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		
+		Log.d("MPSolve", "Saving the state of the Fragments");
+		
+		// TODO: Saving the fragments should go here. 
+		
+		// Remove the fragments from the current layout
+		getSupportFragmentManager().beginTransaction().remove(
+				rootsListFragment).commitAllowingStateLoss();
+		getSupportFragmentManager().beginTransaction().remove(
+				rootsRendererFragment).commitAllowingStateLoss();
+	}
+	
+	private void loadContent() {
+		
+		// The list of Roots is needed only in case we are
+		// already in Landscape mode. Otherwise it will be
+		// loaded on demand as soon as the user flings left/right.
+		if (Utils.isLandscape(this)) {
+			getSupportFragmentManager().beginTransaction().add(
+					R.id.fragmentLayoutLeft,
+					rootsListFragment, ROOTS_LIST_TAG).commit();
+			
+			getSupportFragmentManager().beginTransaction().add(
+					R.id.fragmentLayoutRight,
+					rootsRendererFragment,
+							ROOTS_RENDERER_TAG).commit();
+		}
+		else {
+			loadRootsRenderer();
+		}
+	}
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -72,32 +123,25 @@ public class MainActivity extends FragmentActivity {
     }
     
     public void loadRootsRenderer() {
-    	if (Utils.isLandscape(this)) {
-    		return;
-    	}
+    	int destinationFrame = Utils.isLandscape(this) ? 
+    			R.id.fragmentLayoutRight : R.id.approximationFrame;
     	
     	Log.d("MPSolve", "Loading RootsRenderer");
     	currentState = State.ROOTSRENDERER;
     	
     	FragmentManager manager = getSupportFragmentManager();
     	final FragmentTransaction ft = manager.beginTransaction();
-    	
-    	Fragment rootsRenderer = manager.findFragmentByTag("RootsRenderer");
-    	Log.d("MPSolve", "Fragment = " + rootsRenderer);
-    	if (rootsRenderer == null) {
-    		rootsRenderer = new RootsRendererFragment();
-    	}
-    	
-    	ft.replace(R.id.approximationFrame, rootsRenderer, "RootsRenderer");
+
+    	ft.replace(destinationFrame, rootsRendererFragment, 
+    			ROOTS_RENDERER_TAG);
     	
     	// ft.addToBackStack(null);
     	ft.commit();
     }
     
     public void loadRootsList() {
-    	if (Utils.isLandscape(this)) {
-    		return;
-    	}
+    	int destinationFrame = Utils.isLandscape(this) ? 
+    			R.id.fragmentLayoutLeft : R.id.approximationFrame;
     	
     	Log.d("MPSolve", "Loading Roots list");
     	currentState = State.ROOTLIST;
@@ -105,19 +149,19 @@ public class MainActivity extends FragmentActivity {
     	FragmentManager manager = getSupportFragmentManager();
     	FragmentTransaction ft = manager.beginTransaction();
     	
-    	Fragment rootsFragment = manager.findFragmentByTag("RootsList");
-    	
-    	if (rootsFragment == null)
-    		rootsFragment = new RootsListFragment();
-    	
-    	ft.replace(R.id.approximationFrame, rootsFragment, 
-    			"RootsList");
+    	ft.replace(destinationFrame, rootsListFragment, 
+    			ROOTS_LIST_TAG);
     	
     	// ft.addToBackStack(null);    	
     	ft.commit();
     }
     
     public void switchView() {
+    	// No need for this in case of landscape view, we are 
+    	// are already showing showing both views. 
+    	if (Utils.isLandscape(this))
+    		return;
+    	
     	Log.d("MPSolve", "Switching View");
     	
     	switch (currentState) {
