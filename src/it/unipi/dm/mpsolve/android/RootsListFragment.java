@@ -7,10 +7,8 @@ public class RootsListFragment extends ListFragment {
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		
-		MainActivity activity = (MainActivity) getActivity();
-		setListAdapter(activity.rootsAdapter);
+		super.onActivityCreated(savedInstanceState);		
+		setListAdapter(ApplicationData.getRootsAdapter(getActivity()));
 	}
 	
 }

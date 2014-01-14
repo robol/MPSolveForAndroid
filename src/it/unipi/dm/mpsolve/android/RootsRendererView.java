@@ -1,7 +1,6 @@
 package it.unipi.dm.mpsolve.android;
 
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.util.AttributeSet;

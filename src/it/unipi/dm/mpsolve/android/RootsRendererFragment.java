@@ -29,6 +29,11 @@ public class RootsRendererFragment extends Fragment {
 			Log.d("MPSolve", "View not stored, recreating it");
 			rootsRenderer = inflater.inflate(
 				R.layout.roots_renderer_fragment, null);
+			
+			RootsRendererView view = (RootsRendererView)
+					rootsRenderer.findViewById(R.id.rootsRendererView1);
+			view.setRootsAdapter(ApplicationData.getRootsAdapter(getActivity()));
+			
 		}
 
 		return rootsRenderer;
