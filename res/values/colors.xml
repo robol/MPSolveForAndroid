@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Color for even and odd positions of the ListViews-->
+    <color name="list_even_background">#fff</color>
+    <color name="list_odd_background">#eee</color>    
+</resources>

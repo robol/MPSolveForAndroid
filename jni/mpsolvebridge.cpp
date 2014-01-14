@@ -7,6 +7,14 @@ jobjectArray Java_it_unipi_dm_mpsolve_android_PolynomialSolver_nativeSolvePolyno
 {
 	const char * poly_string = env->GetStringUTFChars(polynomial, NULL);
 
+	/* Parse options */
+	mps_algorithm alg = env->GetCharField(javaThis,
+			env->GetFieldID(
+					env->FindClass("it/unipi/dm/mpsolve/android/PolynomialSolver"),
+					"algorithm", "C")) == 's' ?
+					MPS_ALGORITHM_SECULAR_GA :
+					MPS_ALGORITHM_STANDARD_MPSOLVE;
+
 	cplx_t *roots = NULL;
 	double *radius = NULL;
 
@@ -20,6 +28,9 @@ jobjectArray Java_it_unipi_dm_mpsolve_android_PolynomialSolver_nativeSolvePolyno
 	if (poly)
 	{
 		mps_context_set_input_poly (ctx, poly);
+
+		mps_context_select_algorithm(ctx, alg);
+
 		mps_mpsolve (ctx);
 
 		mps_context_get_roots_d (ctx, &roots, &radius);

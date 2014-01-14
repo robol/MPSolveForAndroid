@@ -2,11 +2,13 @@ package it.unipi.dm.mpsolve.android;
 
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -71,6 +73,18 @@ public class MainActivity extends FragmentActivity {
 				rootsRendererFragment).commitAllowingStateLoss();
 	}
 	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.action_settings:
+			Intent i = new Intent(this, SettingsActivity.class);
+			startActivity(i);
+			return true;
+		}
+		
+		return false;
+	}
+	
 	private void loadContent() {
 		
 		// The list of Roots is needed only in case we are
@@ -103,7 +117,9 @@ public class MainActivity extends FragmentActivity {
 
     	EditText polyLineEdit = (EditText) findViewById(R.id.polyEditText);
     	
-    	points = solver.solvePolynomial(polyLineEdit.getText().toString());
+    	points = solver.solvePolynomial(
+    			this,
+    			polyLineEdit.getText().toString());
     	
     	if (points.length == 0) {
     		// TODO: Warn the user about the fact that polynomial solving has
@@ -135,7 +151,7 @@ public class MainActivity extends FragmentActivity {
     	ft.replace(destinationFrame, rootsRendererFragment, 
     			ROOTS_RENDERER_TAG);
     	
-    	// ft.addToBackStack(null);
+    	ft.addToBackStack(null);
     	ft.commit();
     }
     
@@ -152,7 +168,7 @@ public class MainActivity extends FragmentActivity {
     	ft.replace(destinationFrame, rootsListFragment, 
     			ROOTS_LIST_TAG);
     	
-    	// ft.addToBackStack(null);    	
+    	ft.addToBackStack(null);    	
     	ft.commit();
     }
     

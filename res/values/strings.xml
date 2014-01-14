@@ -6,5 +6,19 @@
     <string name="hello_world">Hello world!</string>
     <string name="insert_a_polynomial">Insert a polynomial:</string>
     <string name="solve">Solve</string>
+    <string name="pref_algorithm">Algorithm</string>
+    <string name="pref_algorithm_summ">Select the algorithm that you want to use for solving polynomials</string>
+    <string name="pref_algorithm_secsolve">secsolve</string>
+    <string-array name="pref_algorithm_values">
+        <item >secsolve</item>
+        <item >unisolve</item>
+    </string-array>
+    <string-array name="pref_algorithm_entries">
+        <item >Secsolve</item>
+        <item >Unisolve</item>
+    </string-array>
+    <string name="pref_digits">Required digits</string>
+    <string name="pref_digits_summ">The minimum number of correct digits in the approximations</string>
+    <string name="pref_digits_default">10</string>
 
 </resources>
