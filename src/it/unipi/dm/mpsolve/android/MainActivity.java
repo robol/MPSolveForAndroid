@@ -38,19 +38,13 @@ public class MainActivity extends FragmentActivity {
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setupGestureDetector();
-        
+        setupGestureDetector();        
 		
 		Log.d("MPSolve", "Loading the the Fragments for the application");
-        if (savedInstanceState == null || true) {
-        	rootsListFragment = new RootsListFragment();
-        	rootsRendererFragment = new RootsRendererFragment();
-        	welcomeFragment = new WelcomeFragment();
-        }
-        	
-        // TODO: We should be able to recover the Fragments from the
-       	// other layout, but it currently doesn't work due to reparenting
-        // issues that I haven't worked out. 
+		        
+    	rootsListFragment = new RootsListFragment();
+    	rootsRendererFragment = new RootsRendererFragment();
+    	welcomeFragment = new WelcomeFragment();
         
         rootsAdapter = ApplicationData.getRootsAdapter(this);        
         setContentView(R.layout.activity_main);
@@ -58,21 +52,33 @@ public class MainActivity extends FragmentActivity {
         // Handle the loading of the contents based on the 
         // current Layout of the Device. 
         loadContent();
+    	
+		if (savedInstanceState != null) {
+			switch (savedInstanceState.getInt("state", 0)) {
+				case 0:
+					currentState = State.WELCOME_SCREEN;
+					loadWelcomeScreen();
+					break;
+				case 1:
+					currentState = State.ROOTLIST;
+					loadRootsList();
+					break;
+				case 2:
+					currentState = State.ROOTSRENDERER;
+					loadRootsRenderer();
+					break;
+			}
+		}
+		else {
+			loadWelcomeScreen();
+		}
     }
 	
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		
-		Log.d("MPSolve", "Saving the state of the Fragments");
-		
-		// TODO: Saving the fragments should go here. 
-		
-		// Remove the fragments from the current layout
-		/* getSupportFragmentManager().beginTransaction().remove(
-				rootsListFragment).commitAllowingStateLoss();
-		getSupportFragmentManager().beginTransaction().remove(
-				rootsRendererFragment).commitAllowingStateLoss(); */
+		super.onSaveInstanceState(outState);		
+		Log.d("MPSolve", "Saving the state of the Activity");		
+		outState.putInt("state", currentState.ordinal());
 	}
 	
 	@Override
@@ -108,8 +114,9 @@ public class MainActivity extends FragmentActivity {
 	}
 	
 	public void loadWelcomeScreen() {
-		getSupportFragmentManager().beginTransaction().replace(
-				R.id.approximationFrame, welcomeFragment).commit();
+		if (!Utils.isLandscape(this))
+			getSupportFragmentManager().beginTransaction().replace(
+					R.id.approximationFrame, welcomeFragment).commit();
 	}
 
     @Override
@@ -145,6 +152,7 @@ public class MainActivity extends FragmentActivity {
     	}
     	
     	if (currentState == State.WELCOME_SCREEN) {
+    		currentState = State.ROOTSRENDERER;
     		loadRootsRenderer();
     	}
     }
@@ -162,7 +170,6 @@ public class MainActivity extends FragmentActivity {
     	ft.replace(destinationFrame, rootsRendererFragment, 
     			ROOTS_RENDERER_TAG);
     	
-    	ft.addToBackStack(null);
     	ft.commitAllowingStateLoss();
     }
     
@@ -178,8 +185,7 @@ public class MainActivity extends FragmentActivity {
     	
     	ft.replace(destinationFrame, rootsListFragment, 
     			ROOTS_LIST_TAG);
-    	
-    	ft.addToBackStack(null);    	
+    	 	
     	ft.commitAllowingStateLoss();
     }
     

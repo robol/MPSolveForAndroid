@@ -19,17 +19,17 @@ public class RootsRendererView extends WebView {
 	
 	private static String URL = "file:///android_asset/rootsrenderer.html";
 
-	private boolean loadingPage = false;
-	
-	private ProgressDialog loadingProgressDialog = null;
+	private boolean loadingPage = true;
 	
 	public RootsRendererView(Context context) {
-		super(context);		
+		super(context);	
+		Log.d("MPsolve", "called RootsRendererView(Context)");
 		setupWebView();
 	}
 
 	public RootsRendererView(Context context, AttributeSet set) {
 		super(context, set);
+		Log.d("MPsolve", "called RootsRendererView(Context, AttributeSet)");
 		setupWebView();	
 	}
 	
@@ -54,12 +54,7 @@ public class RootsRendererView extends WebView {
 	}
 
 	@SuppressLint("SetJavaScriptEnabled")	
-	private void setupWebView() {
-		
-		if (loadingProgressDialog != null) {
-			loadingProgressDialog.dismiss();
-			loadingProgressDialog = null;
-		}		
+	private void setupWebView() {		
 		
 		if (isInEditMode())
 			return;
@@ -83,8 +78,8 @@ public class RootsRendererView extends WebView {
     			loadingPage = true;
     			
     			// We only need this in non landscape mode. 
-    			if (! Utils.isLandscape(getContext()) && loadingProgressDialog == null)
-    				loadingProgressDialog = ProgressDialog.show(getContext(), 
+    			if (! Utils.isLandscape(getContext()))
+    				ApplicationData.startLoadingMessage(getContext(), 
     						"Rendering", 
     						"MPSolve is loading the approximation renderer. Please wait...");    			
     		}
@@ -93,16 +88,15 @@ public class RootsRendererView extends WebView {
     			loadingPage = false;
     			
     			// Reload points in every case. 
-    			inflatePoints(adapter.roots);
-    			
-    			if (loadingProgressDialog != null) {
-        			loadingProgressDialog.dismiss();    				
-        			loadingProgressDialog = null;
-    			}
+    			inflatePoints(adapter.roots);    			
+    			ApplicationData.stopLoadingMessage();
     		}
     	});
     	
+    	setRootsAdapter(ApplicationData.getRootsAdapter(getContext()));
+    	
     	// Load our custom RootsRenderer implemented in HTML + js
+    	Log.d("MPSolve", "Reloading web page");
     	loadUrl(RootsRendererView.URL);
 	}
 	

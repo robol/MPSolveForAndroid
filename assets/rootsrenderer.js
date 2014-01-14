@@ -10,7 +10,6 @@ function RootsRenderer() {
   // Possibile values for this are PLOT and 
   // APPROXIMATION_LIST. 
   this.state = RootsRendererState.PLOT;
-  
   this.target.resize(this.redraw);
 }
 
