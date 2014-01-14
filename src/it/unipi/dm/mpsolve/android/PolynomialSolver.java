@@ -27,9 +27,13 @@ public class PolynomialSolver {
 		switch (Settings.getAlgorithm(context)) {
 		case UNISOLVE:
 			algorithm = 'u';
+			break;
 		case SECSOLVE:
 			algorithm = 's';
+			break;
 		}
+		
+		digits = Settings.getDigits(context);
 		
 		return nativeSolvePolynomial(polynomial);  
 	}

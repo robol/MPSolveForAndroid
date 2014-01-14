@@ -67,10 +67,10 @@ public class MainActivity extends FragmentActivity {
 		// TODO: Saving the fragments should go here. 
 		
 		// Remove the fragments from the current layout
-		getSupportFragmentManager().beginTransaction().remove(
+		/* getSupportFragmentManager().beginTransaction().remove(
 				rootsListFragment).commitAllowingStateLoss();
 		getSupportFragmentManager().beginTransaction().remove(
-				rootsRendererFragment).commitAllowingStateLoss();
+				rootsRendererFragment).commitAllowingStateLoss(); */
 	}
 	
 	@Override
@@ -152,7 +152,7 @@ public class MainActivity extends FragmentActivity {
     			ROOTS_RENDERER_TAG);
     	
     	ft.addToBackStack(null);
-    	ft.commit();
+    	ft.commitAllowingStateLoss();
     }
     
     public void loadRootsList() {
@@ -169,7 +169,7 @@ public class MainActivity extends FragmentActivity {
     			ROOTS_LIST_TAG);
     	
     	ft.addToBackStack(null);    	
-    	ft.commit();
+    	ft.commitAllowingStateLoss();
     }
     
     public void switchView() {
@@ -184,8 +184,10 @@ public class MainActivity extends FragmentActivity {
     	case NONE:
     	case ROOTLIST:
     		loadRootsRenderer();
+    		break;
     	case ROOTSRENDERER:
     		loadRootsList();
+    		break;
     	}
     }
     

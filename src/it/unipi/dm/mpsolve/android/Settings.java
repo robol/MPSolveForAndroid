@@ -27,11 +27,11 @@ public class Settings {
 		
 		String algPref = p.getString("pref_algorithm", "secsolve");
 		
-		if (algPref == "secsolve") {
+		if (algPref.equals("secsolve")) {
 			return Algorithm.SECSOLVE;
 		}
 		
-		if (algPref == "unisolve") {
+		if (algPref.equals("unisolve")) {
 			return Algorithm.UNISOLVE;
 		}
 		
@@ -39,6 +39,14 @@ public class Settings {
 				algPref);
 		
 		return Algorithm.SECSOLVE;
+	}
+	
+	public static int getDigits(Context context) {
+		SharedPreferences p = 
+				PreferenceManager.getDefaultSharedPreferences(context);
+		
+		int digits = Integer.parseInt(p.getString("pref_digits", "10"));
+		return digits;
 	}
 	
 	public static int digits = 10;

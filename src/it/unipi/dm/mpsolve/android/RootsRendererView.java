@@ -56,6 +56,11 @@ public class RootsRendererView extends WebView {
 	@SuppressLint("SetJavaScriptEnabled")	
 	private void setupWebView() {
 		
+		if (loadingProgressDialog != null) {
+			loadingProgressDialog.dismiss();
+			loadingProgressDialog = null;
+		}		
+		
 		if (isInEditMode())
 			return;
 		
@@ -68,7 +73,7 @@ public class RootsRendererView extends WebView {
     		  public void onConsoleMessage(String message, int lineNumber, String sourceID) {
     		    Log.d("MPSolve", message + " -- From line "
     		                     + lineNumber + " of "
-    		                     + sourceID);    		    
+    		                     + sourceID);
     		  }
     		});
     	
@@ -78,7 +83,7 @@ public class RootsRendererView extends WebView {
     			loadingPage = true;
     			
     			// We only need this in non landscape mode. 
-    			if (! Utils.isLandscape(getContext()))
+    			if (! Utils.isLandscape(getContext()) && loadingProgressDialog == null)
     				loadingProgressDialog = ProgressDialog.show(getContext(), 
     						"Rendering", 
     						"MPSolve is loading the approximation renderer. Please wait...");    			
@@ -118,8 +123,9 @@ public class RootsRendererView extends WebView {
 	    	for (int i = 0; i < points.length; i++) {
 	    		// This is a poor man converter between our internal string
 	    		// representation of complex numbers and arrays in JavaScript.
-	    		loadUrl("javascript:$.rootsRenderer.addPoint(" + 
-	    				points[i].replace("(",  "[").replace(")", "]") + ")"); 
+	    		loadUrl("javascript:$.rootsRenderer.addPoint([" + 
+	    				points[i].replace(" + ",  ",").replace(" -", ", -").replace("i", "") 
+	    				+ "])");
 	    	}
 	    	
 	    	loadUrl("javascript:$.rootsRenderer.redraw()");
