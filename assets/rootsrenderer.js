@@ -10,6 +10,8 @@ function RootsRenderer() {
   // Possibile values for this are PLOT and 
   // APPROXIMATION_LIST. 
   this.state = RootsRendererState.PLOT;
+  
+  this.target.resize(this.redraw);
 }
 
 /**
@@ -63,11 +65,13 @@ RootsRenderer.prototype.writeRoots = function () {
 }
 
 RootsRenderer.prototype.redraw = function () {
-  $.plot(this.target, [{ 
-    data: this.points, 
-    points: { 
-      show: true,
-    }, 
-    colors: [ "#f22", "#22f" ]
-  }]);
+  if (this.target.height() > 0 && this.target.width() > 0) {
+      $.plot(this.target, [{ 
+        data: this.points, 
+        points: { 
+          show: true,
+        }, 
+        colors: [ "#f22", "#22f" ]
+      }]);
+  }
 }

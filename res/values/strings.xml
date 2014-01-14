@@ -20,5 +20,7 @@
     <string name="pref_digits">Required digits</string>
     <string name="pref_digits_summ">The minimum number of correct digits in the approximations</string>
     <string name="pref_digits_default">10</string>
+    <string name="welcome_to_mpsolve">Welcome to MPSolve!</string>
+    <string name="instructions">You can solve a polynomial by entering text in the entry above. \n\nFor example, try x^70 - 2e4x^10 + 1</string>
 
 </resources>

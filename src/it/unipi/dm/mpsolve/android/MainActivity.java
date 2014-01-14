@@ -19,7 +19,7 @@ public class MainActivity extends FragmentActivity {
 	public String ROOTS_RENDERER_TAG = "RootsRenderer";
 	
 	private enum State {
-		NONE,
+		WELCOME_SCREEN,
 		ROOTSRENDERER,
 		ROOTLIST
 	}
@@ -29,10 +29,11 @@ public class MainActivity extends FragmentActivity {
 	
 	private GestureDetector gestureDetector;
 	public RootsAdapter rootsAdapter;
-	private State currentState = State.NONE;
+	private State currentState = State.WELCOME_SCREEN;
 	
 	private RootsListFragment rootsListFragment;
 	private RootsRendererFragment rootsRendererFragment;
+	private WelcomeFragment welcomeFragment;
 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +45,7 @@ public class MainActivity extends FragmentActivity {
         if (savedInstanceState == null || true) {
         	rootsListFragment = new RootsListFragment();
         	rootsRendererFragment = new RootsRendererFragment();
+        	welcomeFragment = new WelcomeFragment();
         }
         	
         // TODO: We should be able to recover the Fragments from the
@@ -101,8 +103,13 @@ public class MainActivity extends FragmentActivity {
 							ROOTS_RENDERER_TAG).commit();
 		}
 		else {
-			loadRootsRenderer();
+			loadWelcomeScreen();
 		}
+	}
+	
+	public void loadWelcomeScreen() {
+		getSupportFragmentManager().beginTransaction().replace(
+				R.id.approximationFrame, welcomeFragment).commit();
 	}
 
     @Override
@@ -135,6 +142,10 @@ public class MainActivity extends FragmentActivity {
     		}
     		
     		rootsAdapter.setPoints(roots, radii);
+    	}
+    	
+    	if (currentState == State.WELCOME_SCREEN) {
+    		loadRootsRenderer();
     	}
     }
     
@@ -181,7 +192,9 @@ public class MainActivity extends FragmentActivity {
     	Log.d("MPSolve", "Switching View");
     	
     	switch (currentState) {
-    	case NONE:
+    	case WELCOME_SCREEN:
+    		// Nothing to do
+    		break;
     	case ROOTLIST:
     		loadRootsRenderer();
     		break;
