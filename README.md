@@ -17,7 +17,7 @@ steps:
    An example of directories layout is this: 
    
    - MPSolveAndroidBuild/
-     - mpsolve-3.1.5/
+     - mpsolve/
        + android-ext-arm-.../
        + android-ext-x86-.../
      + MPSolveForAndroid/
