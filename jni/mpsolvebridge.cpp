@@ -46,7 +46,7 @@ jobjectArray Java_it_unipi_dm_mpsolve_android_PolynomialSolver_nativeSolvePolyno
 		mps_mpsolve (ctx);
 		approximations = mps_context_get_approximations (ctx);
 
-		for (int i = 0; i < mps_context_get_degree (ctx); i++)
+		for (int i = 0; i < mps_context_get_degree (ctx) + mps_context_get_zero_roots (ctx); i++)
 		{
 			char* output = (char*) malloc (2 * digits + 25);
 
@@ -120,7 +120,7 @@ jobjectArray Java_it_unipi_dm_mpsolve_android_PolynomialSolver_nativeSolvePolyno
 	}
 	else
 	{
-		__android_log_print(ANDROID_LOG_DEBUG, "it.dm.unipi.mpsolve",
+		__android_log_print(ANDROID_LOG_DEBUG, "MPSolve",
 				"Cannot parse user polynomial: %s", poly_string);
 	}
 

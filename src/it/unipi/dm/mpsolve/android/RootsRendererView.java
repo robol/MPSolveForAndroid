@@ -2,6 +2,8 @@ package it.unipi.dm.mpsolve.android;
 
 import android.content.Context;
 import android.database.DataSetObserver;
+import android.graphics.BlurMaskFilter;
+import android.graphics.BlurMaskFilter.Blur;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -67,6 +69,7 @@ public class RootsRendererView extends View {
 		pointsPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		pointsPaint.setColor(Color.RED);
 		pointsPaint.setStyle(Style.FILL_AND_STROKE);
+		pointsPaint.setMaskFilter(new BlurMaskFilter(2, Blur.INNER));		
 	}
 	
 	@Override
@@ -74,7 +77,8 @@ public class RootsRendererView extends View {
 		width = w;
 		height = h;
 		
-		inflatePoints(adapter.roots);
+		if (adapter.roots != null)
+			inflatePoints(adapter.roots);
 	}
 	
 	@Override
@@ -85,7 +89,7 @@ public class RootsRendererView extends View {
 		if (adapter.roots != null) {
 			for (Approximation p : adapter.roots) {
 				PointF coords = approximationToLocalCoords(p);
-				canvas.drawCircle(coords.x, coords.y, 3, pointsPaint);
+				canvas.drawCircle(coords.x, coords.y, 4, pointsPaint);
 			}
 		}
 		
@@ -175,8 +179,8 @@ public class RootsRendererView extends View {
     				maximumY - minimumY);
     	
     	// Ensure that the scale is big enough that we don't have issues
-    	// representing the numbers as doubles. 
-    	scale = Math.max (1.0e-250, scale);
+    	// representing the numbers as floats. 
+    	scale = Math.max (1.0e-20, scale);
     	
     	// Handle the particular case with only one root, or no roots
     	// at all. We set the convential scale of 1.0 in that case. 
