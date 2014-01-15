@@ -12,7 +12,7 @@ public class PolynomialSolver {
 	private char algorithm = 's';
 	private int  digits = 10;
 	
-	private native String[] nativeSolvePolynomial(String input);
+	private native Approximation[] nativeSolvePolynomial(String input);
 	
 	/** 
 	 * Solve a polynomial. 
@@ -22,7 +22,7 @@ public class PolynomialSolver {
 	 * @return An array of strings containing the approximation and the 
 	 * radii in odd and even positions, respectively.  
 	 */
-	public String[] solvePolynomial (Context context, String polynomial) {
+	public Approximation[] solvePolynomial (Context context, String polynomial) {
 		
 		switch (Settings.getAlgorithm(context)) {
 		case UNISOLVE:

@@ -19,18 +19,15 @@ public class RootsAdapter implements ListAdapter {
 	
 	private ArrayList<DataSetObserver> observers = new ArrayList<DataSetObserver>(0);
 	
-	public String[] roots;
-	public String[] radius;
+	public Approximation[] roots;
 	
 	public RootsAdapter(Context context) {
 		this.context = context;
 		roots = null;
-		radius = null;
 	}
 	
-	public void setPoints(String[] points, String[] radii) {
+	public void setPoints(Approximation[] points) {
 		roots = points;
-		radius = radii;
 		
 		for (DataSetObserver o : observers) {
 			o.onChanged();
@@ -78,10 +75,13 @@ public class RootsAdapter implements ListAdapter {
 					context.getResources().getColor(R.color.list_odd_background));
 		
 		TextView rootText = (TextView) v.findViewById(R.id.rootText);
-		rootText.setText(roots[position]);
+		rootText.setText(roots[position].valueRepresentation);
 		
 		TextView radiusText = (TextView) v.findViewById(R.id.radiusText);
-		radiusText.setText("Radius: " + radius[position]);		
+		radiusText.setText("Radius: " + roots[position].radiusRepresentation);
+		
+		TextView statusText = (TextView) v.findViewById(R.id.statusText);
+		statusText.setText("Status: " + roots[position].status);
 		
 		return v;
 	}

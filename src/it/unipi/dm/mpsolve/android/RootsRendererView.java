@@ -38,7 +38,6 @@ public class RootsRendererView extends WebView {
 			this.adapter.unregisterDataSetObserver(observer);
 		
 		this.adapter = adapter;
-		inflatePoints(adapter.roots);
 		
 		final RootsAdapter currentAdapter = adapter;
 
@@ -86,9 +85,9 @@ public class RootsRendererView extends WebView {
     		public void onPageFinished(WebView view, String url) {
     			loadingPage = false;
     			
-    			// Reload points in every case. 
-    			inflatePoints(adapter.roots);    			
+    			// Reload points in every case.
     			ApplicationData.stopLoadingMessage();
+    			inflatePoints(adapter.roots);
     		}
     	});
     	
@@ -99,6 +98,13 @@ public class RootsRendererView extends WebView {
     	loadUrl(RootsRendererView.URL);
 	}
 	
+	private void callJavascript(String instruction) {
+		loadUrl("javascript:$(document).ready( function() { " +
+				"if (typeof $.rootsRenderer === 'undefined') { $.rootsRenderer = new RootsRenderer(); } \n" +
+				 instruction +
+				"});");
+	}
+	
     /**
      * @brief Inflate the points stored in the MainActivity into the WebView
      * so that they will be plotted. 
@@ -107,21 +113,21 @@ public class RootsRendererView extends WebView {
      * or when the WebView needs to reload the plot (for example after a layout
      * change). 
      */
-    public void inflatePoints(String[] points) {
+    public void inflatePoints(Approximation[] points) {
     	if (points == null)
     		return;
     	
     	if (! loadingPage) {
-	    	loadUrl("javascript:$.rootsRenderer.clear()");
+	    	// loadUrl("javascript:$(document).ready(function() { $.rootsRenderer.clear()); });");
+    		callJavascript("$.rootsRenderer.clear();");
 	    	for (int i = 0; i < points.length; i++) {
 	    		// This is a poor man converter between our internal string
 	    		// representation of complex numbers and arrays in JavaScript.
-	    		loadUrl("javascript:$.rootsRenderer.addPoint([" + 
-	    				points[i].replace(" + ",  ",").replace(" -", ", -").replace("i", "") 
-	    				+ "])");
+	    		callJavascript("$.rootsRenderer.addPoint([ " + points[i].realValue + ", " + points[i].imagValue + "]);");
 	    	}
 	    	
-	    	loadUrl("javascript:$.rootsRenderer.redraw()");
+	    	callJavascript("$.rootsRenderer.redraw();");
+	    	// loadUrl("javascript:$.rootsRenderer.redraw()");
     	}
     }
 

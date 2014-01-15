@@ -12,11 +12,8 @@ import android.widget.EditText;
 
 public class MainActivity extends FragmentActivity {
 	
-	public String ROOTS_LIST_TAG = "RootsList";
-	public String ROOTS_RENDERER_TAG = "RootsRenderer";
-	
 	private PolynomialSolver solver = new PolynomialSolver();
-	public String[] points = new String[0];
+	public Approximation[] points = new Approximation[0];
 	
 	public RootsAdapter rootsAdapter;
 	private WelcomeFragment welcomeFragment;
@@ -62,12 +59,12 @@ public class MainActivity extends FragmentActivity {
 		if (Utils.isLandscape(this)) {
 			getSupportFragmentManager().beginTransaction().add(
 					R.id.fragmentLayoutLeft,
-					new RootsListFragment(), ROOTS_LIST_TAG).commit();
+					new RootsListFragment(), RootsListFragment.TAG).commit();
 			
 			getSupportFragmentManager().beginTransaction().add(
 					R.id.fragmentLayoutRight,
 					new RootsRendererFragment(),
-							ROOTS_RENDERER_TAG).commit();
+							RootsRendererFragment.TAG).commit();
 		}
 		else {
 			ViewPager pager = (ViewPager) findViewById(R.id.pager);
@@ -95,16 +92,8 @@ public class MainActivity extends FragmentActivity {
     		// TODO: Warn the user about the fact that polynomial solving has
     		// failed. 
     	}
-    	else {
-    		String[] roots = new String[points.length / 2];
-    		String[] radii = new String[points.length / 2];
-    		
-    		for (int i = 0; i < roots.length; i++) {
-    			roots[i] = points[2*i];
-    			radii[i] = points[2*i + 1];
-    		}
-    		
-    		rootsAdapter.setPoints(roots, radii);
+    	else {    		
+    		rootsAdapter.setPoints(points);
     	}
     }
         

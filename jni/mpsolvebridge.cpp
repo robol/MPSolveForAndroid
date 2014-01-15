@@ -20,49 +20,102 @@ jobjectArray Java_it_unipi_dm_mpsolve_android_PolynomialSolver_nativeSolvePolyno
 					env->FindClass("it/unipi/dm/mpsolve/android/PolynomialSolver"),
 					"digits", "I"));
 
-	mpc_t *roots = NULL;
-	rdpe_t *radius = NULL;
-
 	mps_context * ctx = mps_context_new ();
 	mps_polynomial *poly = mps_parse_inline_poly_from_string (ctx, poly_string);
 
-	jobjectArray array = env->NewObjectArray(poly ? 2 * poly->degree : 0,
-				env->FindClass("java/lang/String"),
+	jclass approximationClass = env->FindClass(
+			"it/unipi/dm/mpsolve/android/Approximation");
+
+	jmethodID approximationConstructor = env->GetMethodID(approximationClass,
+			"<init>", "()V");
+
+	jobjectArray array = env->NewObjectArray(poly ? poly->degree : 0,
+				approximationClass,
 				NULL);
 
 	if (poly)
 	{
+		mps_approximation **approximations = NULL;
 		mps_context_set_input_poly (ctx, poly);
 
 		mps_context_select_algorithm(ctx, alg);
 		mps_context_set_output_prec(ctx, digits * log(10) / log(2));
 
-		mps_mpsolve (ctx);
+		mps_context_add_debug_domain (ctx, MPS_DEBUG_TRACE);
 
-		mps_context_get_roots_m (ctx, &roots, &radius);
+		mps_mpsolve (ctx);
+		approximations = mps_context_get_approximations (ctx);
 
 		for (int i = 0; i < mps_context_get_degree (ctx); i++)
 		{
 			char* output = (char*) malloc (2 * digits + 25);
 
-			if (mpf_sgn (mpc_Im (roots[i])) > 0)
-			   gmp_sprintf (output, "%.*Fe + %.*Fei", digits, mpc_Re (roots[i]),
-			                digits, mpc_Im (roots[i]));
+			cplx_t fvalue;
+			mpc_t  mvalue;
+			rdpe_t drad;
+
+			mpc_init2 (mvalue, digits * 3);
+
+			mps_approximation_get_fvalue (ctx, approximations[i], fvalue);
+			mps_approximation_get_mvalue (ctx, approximations[i], mvalue);
+			mps_approximation_get_drad   (ctx, approximations[i], drad);
+
+			double realPartF = cplx_Re(fvalue);
+			double imagPartF = cplx_Im(fvalue);
+
+			jobject approximationObject = env->NewObject(approximationClass,
+					approximationConstructor);
+
+			// Create the String representation of the approximation
+
+			if (realPartF >= 0)
+			   gmp_sprintf (output, "%.*Fe + %.*Fei", digits, mpc_Re (mvalue),
+			                digits, mpc_Im (mvalue));
 			else
-			   gmp_sprintf (output, "%.*Fe %.*Fei", digits, mpc_Re (roots[i]),
-			                digits, mpc_Im (roots[i]));
+			   gmp_sprintf (output, "%.*Fe %.*Fei", digits, mpc_Re (mvalue),
+			                digits, mpc_Im (mvalue));
 
-			env->SetObjectArrayElement(array, 2*i, env->NewStringUTF(output));
+			env->SetObjectField(approximationObject,
+					env->GetFieldID(approximationClass,
+							"valueRepresentation",
+							"Ljava/lang/String;"),
+					env->NewStringUTF(output));
 
-			rdpe_get_str (output, radius[i]);
-			env->SetObjectArrayElement(array, 2*i + 1, env->NewStringUTF(output));
+			// Get the String representation of the radius
 
+			rdpe_get_str (output, drad);
+
+			env->SetObjectField(approximationObject,
+								env->GetFieldID(approximationClass,
+										"radiusRepresentation",
+										"Ljava/lang/String;"),
+								env->NewStringUTF(output));
+
+			// Store other floating point values
+			env->SetDoubleField(approximationObject,
+					env->GetFieldID(approximationClass, "radius", "D"),
+							mps_approximation_get_frad(ctx, approximations[i]));
+			env->SetDoubleField(approximationObject,
+					env->GetFieldID(approximationClass, "realValue", "D"),
+						realPartF);
+			env->SetDoubleField(approximationObject,
+					env->GetFieldID(approximationClass, "imagValue", "D"),
+						imagPartF);
+
+			// Store the Status of the Approximation
+			env->SetObjectField(approximationObject,
+					env->GetFieldID(approximationClass, "status", "Ljava/lang/String;"),
+					env->NewStringUTF(
+							MPS_ROOT_STATUS_TO_STRING (mps_approximation_get_status (ctx, approximations[i]))));
+
+			env->SetObjectArrayElement(array, i, approximationObject);
+
+			mpc_clear (mvalue);
 			free (output);
+			mps_approximation_free (ctx, approximations[i]);
 		}
 
-		mpc_vclear (roots, mps_context_get_degree (ctx));
-		free (roots);
-		free (radius);
+		free (approximations);
 		mps_monomial_poly_free (ctx, MPS_POLYNOMIAL (poly));
 	}
 	else
@@ -70,6 +123,7 @@ jobjectArray Java_it_unipi_dm_mpsolve_android_PolynomialSolver_nativeSolvePolyno
 		__android_log_print(ANDROID_LOG_DEBUG, "it.dm.unipi.mpsolve",
 				"Cannot parse user polynomial: %s", poly_string);
 	}
+
 	mps_context_free (ctx);
 
 	env->ReleaseStringUTFChars(polynomial, poly_string);

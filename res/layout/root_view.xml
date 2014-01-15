@@ -20,6 +20,14 @@
         android:layout_height="fill_parent"
         android:layout_weight="1"
         android:text=""
+        android:textAppearance="?android:attr/textAppearanceSmall" />    
+        
+    <TextView
+        android:id="@+id/statusText"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:text=""
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
 </LinearLayout>
