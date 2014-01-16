@@ -21,5 +21,23 @@ steps:
        + android-ext-arm-.../
        + android-ext-x86-.../
      + MPSolveForAndroid/
+
+   Note that the folder for MPSolve is called "mpsolve" with lower case characters. 
      
-4. Build the app using Eclipse or ant or whatever you want. 
+You can finally build the app using Eclipse or ant or whatever you want. The instructions below will 
+reproduce the steps above and compile the APK using android SDK and NDK (and assuming the relevant
+folders are in your PATH): 
+
+```shell
+  $ git clone git://github.com/robol/MPSolve mpsolve
+  $ ( cd mpsolve && ./autogen.sh && ./tools/android-build-libmps.sh )
+     [ Select option 4. Build for all architectures ]
+  $ git clone git://github.com/robol/MPSolveForAndroid 
+  $ cd MPSolveForAndroid
+  $ android update -project -p . -t n 
+    [ n is the number of the target that you want. You can find available targets
+      with android list targets ]. 
+  $ ndk-build all 
+  $ cp /path/to/android/sdk/extras/support/v4/android-support-v4.jar ./libs/
+  $ ant debug
+```
