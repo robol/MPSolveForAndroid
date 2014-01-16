@@ -34,7 +34,7 @@ $ ( cd mpsolve && ./autogen.sh && ./tools/android-build-libmps.sh )
    [ Select option 4. Build for all architectures ]
 $ git clone git://github.com/robol/MPSolveForAndroid 
 $ cd MPSolveForAndroid
-$ android update -project -p . -t n 
+$ android update project -p . -t n 
   [ n is the number of the target that you want. You can find available targets
     with android list targets ]. 
 $ ndk-build all 
