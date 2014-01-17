@@ -24,6 +24,9 @@ public class RootsRendererView extends View {
 	private double width = 0;
 	private double height = 0;
 	
+	private double x_range = 1.0;
+	private double y_range = 1.0;
+	
 	private double scale = 1.0;
 	private double x_center = 0.0;
 	private double y_center = 0.0;
@@ -62,12 +65,16 @@ public class RootsRendererView extends View {
 	/** 
 	 * @brief Prepare the Paints for later user in the onDraw() method. 
 	 */
-	private void initPaints() {
+	private void initPaints() {		
+		// Paint used for the X and Y axis. 
 		axisPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-		axisPaint.setColor(Color.BLACK);
+		axisPaint.setColor(
+				getResources().getColor(R.color.rootsRendererView_axis));
 		
+		// Paint used for the points of the plot
 		pointsPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-		pointsPaint.setColor(Color.RED);
+		pointsPaint.setColor(
+				getResources().getColor(R.color.rootsRendererView_points));
 		pointsPaint.setStyle(Style.FILL_AND_STROKE);
 		pointsPaint.setMaskFilter(new BlurMaskFilter(2, Blur.INNER));		
 	}
@@ -76,6 +83,15 @@ public class RootsRendererView extends View {
 	public void onSizeChanged (int w, int h, int oldw, int oldh) {
 		width = w;
 		height = h;
+		
+		if (w < h) {
+			x_range = 1.0;
+			y_range = height / width;
+		}
+		else {
+			y_range = 1.0;
+			x_range = width / height;
+		}
 		
 		if (adapter.roots != null)
 			inflatePoints(adapter.roots);
@@ -99,11 +115,13 @@ public class RootsRendererView extends View {
 	}
 	
 	private void drawXAxis(Canvas canvas) {
-		float x_axis_level = (float) Math.max(0.0, y_center - .5 * scale);
-		x_axis_level = (float) Math.min(x_axis_level, y_center + .5 * scale);
+		float x_axis_level = (float) Math.max(0.0, y_center - .95 * scale * y_range);
+		x_axis_level = (float) Math.min(x_axis_level, y_center + .95 * scale * y_range);
 		
-		PointF start = pointToLocalCoords(x_center - .95 * scale, x_axis_level);
-		PointF end   = pointToLocalCoords(x_center + .95 * scale, x_axis_level);
+		PointF start = pointToLocalCoords(x_center - .95 * x_range * scale, 
+				x_axis_level);
+		PointF end   = pointToLocalCoords(x_center + .95 * scale * x_range, 
+				x_axis_level);
 		
 		canvas.drawLine(start.x, start.y, end.x, end.y, axisPaint);
 		
@@ -111,16 +129,29 @@ public class RootsRendererView extends View {
 	}
 	
 	private void drawYAxis(Canvas canvas) {
-		float y_axis_level = (float) Math.max(0.0, x_center - .5 * scale);
-		y_axis_level = (float) Math.min(y_axis_level, x_center + .5 * scale);
+		float y_axis_level = (float) Math.max(0.0, x_center - .95 * scale * x_range);
+		y_axis_level = (float) Math.min(y_axis_level, x_center + .95 * scale * x_range);
 		
-		PointF start = pointToLocalCoords(y_axis_level, y_center - .95 * scale);
-		PointF end   = pointToLocalCoords(y_axis_level, y_center + .95 * scale);
+		PointF start = pointToLocalCoords(y_axis_level, 
+				y_center - .95 * scale * y_range);
+		PointF end   = pointToLocalCoords(y_axis_level, 
+				y_center + .95 * scale * y_range);
 		
 		canvas.drawLine(start.x, start.y, end.x, end.y, axisPaint);
 		
-		// TODO: Draw nicer axis by marking the scale and refining this function
-	}		
+		// Compute a reasonable distance for the ticks that we should draw
+		// on the axis.
+		double step = getAxisStep(scale * y_range);
+		Log.d("MPSolve", "axisStep = " + step);
+		for (double t = y_center - 10.0 * step; t <= y_center + 10.0 * step; t += step) {
+			PointF tick = pointToLocalCoords(y_axis_level, t);			
+			canvas.drawLine(tick.x - 2, tick.y, tick.x + 2, tick.y, axisPaint);
+		}
+	}
+	
+	private double getAxisStep(double axisRange) {
+		return 0.1;
+	}
 	
 	/** 
 	 * @brief Get the local coordinates in the View for the points in position
@@ -133,10 +164,12 @@ public class RootsRendererView extends View {
 		return pointToLocalCoords(point.realValue, point.imagValue);
 	}
 	
-	private PointF pointToLocalCoords(double x, double y) {		
+	private PointF pointToLocalCoords(double x, double y) {
+		double min_wh = Math.min(width, height);
+		
 		// Get local coordinates w.r.t to the center. 
-		double rel_x = (x - x_center) / scale * width / 2;
-		double rel_y = (y - y_center) / scale * height / 2;
+		double rel_x = (x - x_center) / scale * min_wh / 2;
+		double rel_y = (y - y_center) / scale * min_wh / 2;
 		
 		// Remember that graphics coordinates are flipped on the vertical axis
 		// w.r.t the standard ones. 
@@ -156,10 +189,10 @@ public class RootsRendererView extends View {
     		return;
     	
     	// We need to compute an appropriate scale for the plot. 
-    	double maximumX = 0.0;
-    	double minimumX = 0.0;
-    	double maximumY = 0.0;
-    	double minimumY = 0.0; 
+    	double maximumX = points[0].realValue;
+    	double minimumX = maximumX;
+    	double maximumY = points[0].imagValue;
+    	double minimumY = maximumY; 
     	
     	for (Approximation p : points) {
     		minimumX = Math.min(p.realValue, minimumX);
@@ -177,6 +210,9 @@ public class RootsRendererView extends View {
     	// on the real scale.
     	scale = .75 * Math.max (maximumX - minimumX, 
     				maximumY - minimumY);
+    	
+    	Log.d("MPSolve", "Scale = " + scale);
+    	Log.d("MPSolve", "Center = (" + x_center + ", " + y_center + ")");
     	
     	// Ensure that the scale is big enough that we don't have issues
     	// representing the numbers as floats. 

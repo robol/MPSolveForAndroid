@@ -2,5 +2,9 @@
 <resources>
     <!-- Color for even and odd positions of the ListViews-->
     <color name="list_even_background">#fff</color>
-    <color name="list_odd_background">#eee</color>    
+    <color name="list_odd_background">#eee</color>
+    
+    <!-- Colors needed for the RootsRendererView.   -->
+    <color name="rootsRendererView_points">#e55</color>
+    <color name="rootsRendererView_axis">#222</color>
 </resources>
