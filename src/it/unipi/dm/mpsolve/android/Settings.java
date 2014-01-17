@@ -45,7 +45,13 @@ public class Settings {
 		SharedPreferences p = 
 				PreferenceManager.getDefaultSharedPreferences(context);
 		
-		int digits = Integer.parseInt(p.getString("pref_digits", "10"));
+		int digits = 10;
+		try {
+			digits = Integer.parseInt(p.getString("pref_digits", "10"));
+		} catch (NumberFormatException e) {
+			Log.w("MPSolve", "Cannot parse the pref_digits value to an integer");
+		}
+		
 		return digits;
 	}
 	

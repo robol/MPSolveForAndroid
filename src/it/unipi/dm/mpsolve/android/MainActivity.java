@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class MainActivity extends FragmentActivity {
 	
@@ -16,6 +17,8 @@ public class MainActivity extends FragmentActivity {
 	
 	public Approximation[] points = new Approximation[0];	
 	public RootsAdapter rootsAdapter;
+	
+	private int currentPosition = 0;
 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,11 +30,31 @@ public class MainActivity extends FragmentActivity {
         // Handle the loading of the contents based on the 
         // current Layout of the Device. 
         loadContent();
+        
+        if (savedInstanceState != null) {
+        	currentPosition  = savedInstanceState.getInt("pagerPosition");
+        	
+        	if (! Utils.isLandscape(this)) {
+    			Log.d("MPSolve", "Restoring pagerPosition = " + currentPosition);        		
+        		((ViewPager) findViewById(R.id.pager)).setCurrentItem(currentPosition, false);
+        	}
+        }
+        else {
+        	currentPosition = 0;
+        }
     }
 	
 	@Override
-	public void onSaveInstanceState(Bundle outState) {
+	public void onSaveInstanceState(Bundle outState) {	
 		super.onSaveInstanceState(outState);
+		
+		ViewPager pager = (ViewPager) findViewById(R.id.pager);
+		if (pager != null) {
+			currentPosition = pager.getCurrentItem();
+		}		
+
+		Log.d("MPSolve", "Saving current pagerPosition = " + currentPosition);
+		outState.putInt("pagerPosition", currentPosition);
 	}
 	
 	@Override
@@ -73,8 +96,28 @@ public class MainActivity extends FragmentActivity {
         return true;
     }
     
+	public void onExampleButtonClicked(View view) {
+		solvePolynomial("x^70 - 2e4x^10 + 6/7");
+	}
+	
+	public void onHintTouched(View view) {
+		ViewPager pager = (ViewPager) findViewById(R.id.pager);
+		if (pager != null) {
+			pager.setCurrentItem(1, true);
+		}
+	}
+    
+    public void solvePolynomial (String polynomial) {
+    	EditText polyLineEdit = (EditText) findViewById(R.id.polyEditText);
+    	polyLineEdit.setText(polynomial);     	
+    	onSolveButtonClicked(polyLineEdit);
+    }
+    
     public void onSolveButtonClicked (View view) {     	
     	Log.d("MPSolve", "User has asked to solve a polynomial");
+    	
+    	ApplicationData.startLoadingMessage(this, "Solving", 
+    			"MPSolve is working, please wait...");
 
     	EditText polyLineEdit = (EditText) findViewById(R.id.polyEditText);
     	
@@ -86,9 +129,11 @@ public class MainActivity extends FragmentActivity {
     public void onPolynomialSolved (Approximation[] points) {
     	this.points = points;
     	
+    	ApplicationData.stopLoadingMessage();
+    	
     	if (points.length == 0) {
-    		// TODO: Warn the user about the fact that polynomial solving has
-    		// failed. 
+    		Toast.makeText(this, "Failed to parse the polynomial", 
+    				Toast.LENGTH_SHORT).show();
     	}
     	else {    		
     		rootsAdapter.setPoints(points);

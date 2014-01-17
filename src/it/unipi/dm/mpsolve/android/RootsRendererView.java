@@ -1,5 +1,7 @@
 package it.unipi.dm.mpsolve.android;
 
+import java.text.DecimalFormat;
+
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.graphics.BlurMaskFilter;
@@ -29,6 +31,8 @@ public class RootsRendererView extends View {
 	private double scale = 1.0;
 	private double x_center = 0.0;
 	private double y_center = 0.0;
+	
+	private DecimalFormat axisFormat;
 		
 	public RootsRendererView(Context context) {
 		super(context);
@@ -64,7 +68,9 @@ public class RootsRendererView extends View {
 	/** 
 	 * @brief Prepare the Paints for later user in the onDraw() method. 
 	 */
-	private void initPaints() {		
+	private void initPaints() {
+		axisFormat = new DecimalFormat("#.#E0");
+		
 		// Paint used for the X and Y axis. 
 		axisPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		axisPaint.setColor(
@@ -124,7 +130,27 @@ public class RootsRendererView extends View {
 		
 		canvas.drawLine(start.x, start.y, end.x, end.y, axisPaint);
 		
-		// TODO: Draw nicer axis by marking the scale and refining this function
+		// Compute a reasonable distance for the ticks that we should draw on the axis.
+		double step = getAxisStep(scale * x_range);
+		double center = Math.floor(x_center / step) * step;
+		for (double t = 0.0; t < .9 * scale * x_range; t += step) {
+			PointF tick = pointToLocalCoords(center + t, x_axis_level);			
+			canvas.drawLine(tick.x, tick.y - 2, tick.x, tick.y + 2, axisPaint);
+			if (t > 0.0) {
+				String text = axisFormat.format(center + t);
+				canvas.drawText(text, tick.x - axisPaint.measureText(text) / 2, 
+						tick.y - 5, axisPaint);
+			}
+						
+			tick = pointToLocalCoords(center - t, x_axis_level);			
+			canvas.drawLine(tick.x, tick.y - 2, tick.x, tick.y + 2, axisPaint);
+			if (t > 0.0) {
+				String text = axisFormat.format(center - t);
+				canvas.drawText(text, tick.x - axisPaint.measureText(text) / 2, 
+						tick.y - 5, axisPaint);
+			}
+						
+		}		
 	}
 	
 	private void drawYAxis(Canvas canvas) {
@@ -138,18 +164,39 @@ public class RootsRendererView extends View {
 		
 		canvas.drawLine(start.x, start.y, end.x, end.y, axisPaint);
 		
-		// Compute a reasonable distance for the ticks that we should draw
-		// on the axis.
+		// Compute a reasonable distance for the ticks that we should draw on the axis.
 		double step = getAxisStep(scale * y_range);
-		Log.d("MPSolve", "axisStep = " + step);
-		for (double t = y_center - 10.0 * step; t <= y_center + 10.0 * step; t += step) {
-			PointF tick = pointToLocalCoords(y_axis_level, t);			
-			canvas.drawLine(tick.x - 2, tick.y, tick.x + 2, tick.y, axisPaint);
+		double center = Math.floor(y_center / step) * step;
+		for (double t = 0.0; t < .9 * scale * y_range; t += step) {
+			PointF tick = pointToLocalCoords(y_axis_level, center + t);			
+			canvas.drawLine(tick.x - 2, tick.y,	tick.x + 2, tick.y, axisPaint);
+			if (t > 0.0)
+				canvas.drawText(axisFormat.format(center + t), tick.x + 5, 
+						tick.y + axisPaint.getTextSize() / 2, axisPaint);
+			
+			tick = pointToLocalCoords(y_axis_level, center - t);			
+			canvas.drawLine(tick.x - 2, tick.y,	tick.x + 2, tick.y, axisPaint);
+			if (t > 0.0)
+				canvas.drawText(axisFormat.format(center - t), tick.x + 5, 
+						tick.y + axisPaint.getTextSize() / 2, axisPaint);
 		}
 	}
 	
 	private double getAxisStep(double axisRange) {
-		return 0.1;
+		double realScaleLog = Math.log10(axisRange);
+		double flooredValue = Math.floor(realScaleLog);
+		
+		double baseScale = Math.pow(10.0, flooredValue);
+		
+		if (realScaleLog - flooredValue > Math.log(2.0)) {
+			baseScale *= 2;
+		}
+		
+		if (realScaleLog - flooredValue > Math.log(5.0)) {
+			baseScale *= 2.5;
+		}
+		
+		return baseScale;
 	}
 	
 	/** 
@@ -209,9 +256,6 @@ public class RootsRendererView extends View {
     	// on the real scale.
     	scale = .75 * Math.max (maximumX - minimumX, 
     				maximumY - minimumY);
-    	
-    	Log.d("MPSolve", "Scale = " + scale);
-    	Log.d("MPSolve", "Center = (" + x_center + ", " + y_center + ")");
     	
     	// Ensure that the scale is big enough that we don't have issues
     	// representing the numbers as floats. 

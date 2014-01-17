@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:paddingBottom="40dp"
+        android:paddingBottom="20dp"
         android:text="@string/welcome_to_mpsolve"
         android:textAppearance="?android:attr/textAppearanceLarge" />
     
@@ -20,7 +20,26 @@
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingBottom="10dp"
         android:text="@string/instructions"
-        android:textAppearance="?android:attr/textAppearanceMedium" />    
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/welcome_button_example"
+        android:onClick="onExampleButtonClicked" />
+
+    <TextView
+        android:id="@+id/hint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableRight="@drawable/arrow_right"
+        android:paddingTop="20dp"
+        android:text="@string/welcome_hint"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:clickable="true"
+        android:onClick="onHintTouched" />
 
 </LinearLayout>

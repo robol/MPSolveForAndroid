@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">MPSolve for Android</string>
+    <string name="app_name">MPSolve</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="insert_a_polynomial">Insert a polynomial:</string>
@@ -21,6 +21,8 @@
     <string name="pref_digits_summ">The minimum number of correct digits in the approximations</string>
     <string name="pref_digits_default">10</string>
     <string name="welcome_to_mpsolve">Welcome to MPSolve!</string>
-    <string name="instructions">You can solve a polynomial by entering text in the entry above. \n\nFor example, try x^70 - 2e4x^10 + 1</string>
+    <string name="instructions">You can solve a polynomial by entering some text above. \nFor example, try the following:</string>
+    <string name="welcome_button_example">Solve x^70 - 2e4x^10 + 6/7</string>
+    <string name="welcome_hint">&lt;b>Hint:&lt;/b> Navigate through the various views of the approximations by scrolling the pages left or right</string>
 
 </resources>
