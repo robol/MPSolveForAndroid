@@ -75,21 +75,25 @@ jobjectArray Java_it_unipi_dm_mpsolve_android_PolynomialSolver_nativeSolvePolyno
 			   gmp_sprintf (output, "%.*Fe %.*Fei", digits, mpc_Re (mvalue),
 			                digits, mpc_Im (mvalue));
 
+			jobject valueRepresentation = env->NewStringUTF(output);
 			env->SetObjectField(approximationObject,
 					env->GetFieldID(approximationClass,
 							"valueRepresentation",
 							"Ljava/lang/String;"),
-					env->NewStringUTF(output));
+					valueRepresentation);
+			env->DeleteLocalRef(valueRepresentation);
 
 			// Get the String representation of the radius
 
 			rdpe_get_str (output, drad);
 
+			jobject radiusRepresentation = env->NewStringUTF(output);
 			env->SetObjectField(approximationObject,
 								env->GetFieldID(approximationClass,
 										"radiusRepresentation",
 										"Ljava/lang/String;"),
-								env->NewStringUTF(output));
+								radiusRepresentation);
+			env->DeleteLocalRef(radiusRepresentation);
 
 			// Store other floating point values
 			env->SetDoubleField(approximationObject,
@@ -103,16 +107,20 @@ jobjectArray Java_it_unipi_dm_mpsolve_android_PolynomialSolver_nativeSolvePolyno
 						imagPartF);
 
 			// Store the Status of the Approximation
+			jobject status = env->NewStringUTF(
+					MPS_ROOT_STATUS_TO_STRING (mps_approximation_get_status (ctx, approximations[i])));
 			env->SetObjectField(approximationObject,
 					env->GetFieldID(approximationClass, "status", "Ljava/lang/String;"),
-					env->NewStringUTF(
-							MPS_ROOT_STATUS_TO_STRING (mps_approximation_get_status (ctx, approximations[i]))));
+					status);
 
 			env->SetObjectArrayElement(array, i, approximationObject);
+			env->DeleteLocalRef(status);
 
 			mpc_clear (mvalue);
 			free (output);
 			mps_approximation_free (ctx, approximations[i]);
+
+			env->DeleteLocalRef(approximationObject);
 		}
 
 		free (approximations);
