@@ -8,19 +8,31 @@ public class RootsPagerAdapter extends FragmentPagerAdapter {
 
 	private RootsListFragment rootsListFragment;
 	private RootsRendererFragment rootsRendererFragment;
+	private WelcomeFragment welcomeFragment = null;
+	
+	private boolean firstTimeVisitor = true;
 	
 	public RootsPagerAdapter(FragmentManager fm) {
 		super(fm);
 		rootsListFragment = new RootsListFragment();
 		rootsRendererFragment = new RootsRendererFragment();
+		
+		if (firstTimeVisitor)
+			welcomeFragment = new WelcomeFragment();
 	}	
 	
 	@Override
 	public Fragment getItem(int position) {
+		
+		if (! firstTimeVisitor)
+			position += 1;
+		
 		switch (position) {
 		case 0:
-			return rootsRendererFragment;
+			return welcomeFragment;
 		case 1:
+			return rootsRendererFragment;
+		case 2:
 			return rootsListFragment;
 		default:
 			return null;
@@ -29,7 +41,9 @@ public class RootsPagerAdapter extends FragmentPagerAdapter {
 
 	@Override
 	public int getCount() {
-		return 2;
+		// First time visitors will want to see the welcome
+		// fragment that explains the basics. 
+		return firstTimeVisitor ? 3 : 2;
 	}
 
 }

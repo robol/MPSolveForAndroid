@@ -9,33 +9,21 @@ public class PolynomialSolver {
 		System.loadLibrary("mpsolvebridge");
 	}
 	
-	private char algorithm = 's';
-	private int  digits = 10;
+	public char algorithm = 's';
+	public int  digits = 10;
 	
-	private native Approximation[] nativeSolvePolynomial(String input);
+	public native Approximation[] nativeSolvePolynomial(String input);
 	
 	/** 
 	 * Solve a polynomial. 
 	 * 
+	 * @param context is the MainActivity that has called the 
+	 * solver. 
 	 * @param polynomial is a string representing the polynomial 
 	 * to solve. 
-	 * @return An array of strings containing the approximation and the 
-	 * radii in odd and even positions, respectively.  
 	 */
-	public Approximation[] solvePolynomial (Context context, String polynomial) {
-		
-		switch (Settings.getAlgorithm(context)) {
-		case UNISOLVE:
-			algorithm = 'u';
-			break;
-		case SECSOLVE:
-			algorithm = 's';
-			break;
-		}
-		
-		digits = Settings.getDigits(context);
-		
-		return nativeSolvePolynomial(polynomial);  
+	public void solvePolynomial (Context context, String polynomial) {
+		new PolynomialSolverTask().execute(this, context, polynomial);
 	}
 	
 }
