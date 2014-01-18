@@ -94,15 +94,17 @@ public class MainActivity extends FragmentActivity {
 		
 		// Try to solve a polynomial defined by a .pol file. 
 		case REQUEST_OPEN_POL_FILE:
-			Uri uri = data.getData();
-			try {
-				String path = FileUtils.getPath(this, uri);
-				ApplicationData.startLoadingMessage(this, "Solving", 
-		    			"MPSolve is working, please wait..."); 
-				solver.solvePolynomialFile(this, path);
-			} catch (URISyntaxException e) {
-				Toast.makeText(this, "Cannot open the selected file", Toast.LENGTH_SHORT).show();
-				e.printStackTrace();
+			if (data != null) {
+				Uri uri = data.getData();
+				try {
+					String path = FileUtils.getPath(this, uri);
+					ApplicationData.startLoadingMessage(this, "Solving", 
+			    			"MPSolve is working, please wait..."); 
+					solver.solvePolynomialFile(this, path);
+				} catch (URISyntaxException e) {
+					Toast.makeText(this, "Cannot open the selected file", Toast.LENGTH_SHORT).show();
+					e.printStackTrace();
+				}
 			}
 			break;
 		}
