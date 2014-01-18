@@ -39,7 +39,7 @@ jobjectArray Java_it_unipi_dm_mpsolve_android_PolynomialSolver_nativeSolvePolyno
 		mps_context_set_input_poly (ctx, poly);
 
 		mps_context_select_algorithm(ctx, alg);
-		mps_context_set_output_prec(ctx, digits * log(10) / log(2));
+		mps_context_set_output_prec(ctx, digits * LOG2_10);
 
 		mps_context_add_debug_domain (ctx, MPS_DEBUG_TRACE);
 
@@ -53,7 +53,9 @@ jobjectArray Java_it_unipi_dm_mpsolve_android_PolynomialSolver_nativeSolvePolyno
 			cplx_t fvalue;
 			mpc_t  mvalue;
 			rdpe_t drad;
+			double frad = mps_approximation_get_frad (ctx, approximations[i]);
 
+			// Prepare a multiprecision value with a sufficient number of digits
 			mpc_init2 (mvalue, digits * 3);
 
 			mps_approximation_get_fvalue (ctx, approximations[i], fvalue);
@@ -66,14 +68,32 @@ jobjectArray Java_it_unipi_dm_mpsolve_android_PolynomialSolver_nativeSolvePolyno
 			jobject approximationObject = env->NewObject(approximationClass,
 					approximationConstructor);
 
-			// Create the String representation of the approximation
+			int neededRealDigits = MIN (digits, log10 (fabs(realPartF)) - log10 (frad));
+			int neededImagDigits = MIN (digits, log10 (fabs(imagPartF)) - log10 (frad));
 
-			if (realPartF >= 0)
-			   gmp_sprintf (output, "%.*Fe + %.*Fei", digits, mpc_Re (mvalue),
-			                digits, mpc_Im (mvalue));
-			else
-			   gmp_sprintf (output, "%.*Fe %.*Fei", digits, mpc_Re (mvalue),
-			                digits, mpc_Im (mvalue));
+			if (neededRealDigits <= 0) {
+				neededRealDigits = 1;
+				mpf_set_ui (mpc_Re (mvalue), 0U);
+			}
+
+			if (neededImagDigits <= 0) {
+				neededImagDigits = 1;
+				mpf_set_ui (mpc_Im (mvalue), 0U);
+			}
+
+			// Here we perform a basic filtering on the output. Real and imaginary
+			// parts should be truncated according to the radius computed.
+			if (realPartF >= 0) {
+			    gmp_sprintf (output, "%.*Fe + %.*Fei",
+			    		    neededRealDigits,
+			    		    mpc_Re (mvalue),
+			                neededImagDigits, mpc_Im (mvalue));
+			}
+			else {
+			    gmp_sprintf (output, "%.*Fe %.*Fei",
+			    		    neededRealDigits, mpc_Re (mvalue),
+			                neededImagDigits, mpc_Im (mvalue));
+			}
 
 			jobject valueRepresentation = env->NewStringUTF(output);
 			env->SetObjectField(approximationObject,
