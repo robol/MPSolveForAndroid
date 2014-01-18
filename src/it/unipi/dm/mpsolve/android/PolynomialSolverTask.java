@@ -13,6 +13,7 @@ public class PolynomialSolverTask extends AsyncTask<Object, Void, Approximation[
 		caller = (PolynomialSolver) params[0];
 		activity = (MainActivity) params[1];
 		String  polynomial = (String) params[2];
+		String mode = (String) params[3];
 		
 		switch (Settings.getAlgorithm(activity)) {
 		case UNISOLVE:
@@ -25,7 +26,14 @@ public class PolynomialSolverTask extends AsyncTask<Object, Void, Approximation[
 		
 		caller.digits = Settings.getDigits(activity);
 		
-		return caller.nativeSolvePolynomial(polynomial);  
+		if (mode == "inline") {
+			return caller.nativeSolvePolynomial(polynomial);			
+		}  
+		else if (mode == "file") {
+			return caller.nativeSolvePolynomialFile(polynomial);
+		}
+		
+		return new Approximation[0];
 	}
 	
 	@Override

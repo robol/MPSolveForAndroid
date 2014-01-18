@@ -24,5 +24,6 @@
     <string name="instructions">You can solve a polynomial by entering some text above. \nFor example, try the following:</string>
     <string name="welcome_button_example">Solve x^70 - 2e4x^10 + 6/7</string>
     <string name="welcome_hint">&lt;b>Hint:&lt;/b> Navigate through the various views of the approximations by scrolling the pages left or right</string>
+    <string name="action_load_file">Load .pol file</string>
 
 </resources>

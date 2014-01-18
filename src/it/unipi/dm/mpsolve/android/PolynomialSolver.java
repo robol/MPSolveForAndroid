@@ -1,6 +1,7 @@
 package it.unipi.dm.mpsolve.android;
 
 import android.content.Context;
+import android.util.Log;
 
 public class PolynomialSolver {
 	
@@ -13,6 +14,7 @@ public class PolynomialSolver {
 	public int  digits = 10;
 	
 	public native Approximation[] nativeSolvePolynomial(String input);
+	public native Approximation[] nativeSolvePolynomialFile(String path);
 	
 	/** 
 	 * Solve a polynomial. 
@@ -23,7 +25,12 @@ public class PolynomialSolver {
 	 * to solve. 
 	 */
 	public void solvePolynomial (Context context, String polynomial) {
-		new PolynomialSolverTask().execute(this, context, polynomial);
+		new PolynomialSolverTask().execute(this, context, polynomial, "inline");
+	}
+	
+	public void solvePolynomialFile (Context context, String path) {
+		Log.d("MPSolve", "Solving .pol file with path = " + path);
+		new PolynomialSolverTask().execute(this, context, path, "file");
 	}
 	
 }

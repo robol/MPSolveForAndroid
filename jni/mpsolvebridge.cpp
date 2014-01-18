@@ -2,11 +2,10 @@
 #include <android/log.h>
 #include <mps/mps.h>
 
-jobjectArray Java_it_unipi_dm_mpsolve_android_PolynomialSolver_nativeSolvePolynomial
-(JNIEnv * env, jobject javaThis, jstring polynomial)
+static
+jobjectArray solvePolynomial (JNIEnv * env, jobject javaThis, mps_context * ctx,
+		mps_polynomial * poly)
 {
-	const char * poly_string = env->GetStringUTFChars(polynomial, NULL);
-
 	/* Parse options */
 	mps_algorithm alg = env->GetCharField(javaThis,
 			env->GetFieldID(
@@ -19,9 +18,6 @@ jobjectArray Java_it_unipi_dm_mpsolve_android_PolynomialSolver_nativeSolvePolyno
 			env->GetFieldID(
 					env->FindClass("it/unipi/dm/mpsolve/android/PolynomialSolver"),
 					"digits", "I"));
-
-	mps_context * ctx = mps_context_new ();
-	mps_polynomial *poly = mps_parse_inline_poly_from_string (ctx, poly_string);
 
 	jclass approximationClass = env->FindClass(
 			"it/unipi/dm/mpsolve/android/Approximation");
@@ -144,17 +140,51 @@ jobjectArray Java_it_unipi_dm_mpsolve_android_PolynomialSolver_nativeSolvePolyno
 		}
 
 		free (approximations);
-		mps_monomial_poly_free (ctx, MPS_POLYNOMIAL (poly));
 	}
 	else
 	{
 		__android_log_print(ANDROID_LOG_DEBUG, "MPSolve",
-				"Cannot parse user polynomial: %s", poly_string);
+				"Cannot parse user polynomial");
 	}
-
-	mps_context_free (ctx);
-
-	env->ReleaseStringUTFChars(polynomial, poly_string);
 
 	return array;
 }
+
+jobjectArray Java_it_unipi_dm_mpsolve_android_PolynomialSolver_nativeSolvePolynomial
+(JNIEnv * env, jobject javaThis, jstring polynomial)
+{
+	jobjectArray r = NULL;
+	const char * poly_string = env->GetStringUTFChars(polynomial, NULL);
+
+	mps_context * ctx = mps_context_new ();
+	mps_polynomial *poly = mps_parse_inline_poly_from_string (ctx, poly_string);
+
+	r = solvePolynomial (env, javaThis, ctx, poly);
+
+	env->ReleaseStringUTFChars(polynomial, poly_string);
+	mps_monomial_poly_free (ctx, poly);
+	mps_context_free (ctx);
+
+	return r;
+}
+
+jobjectArray Java_it_unipi_dm_mpsolve_android_PolynomialSolver_nativeSolvePolynomialFile
+(JNIEnv * env, jobject javaThis, jstring path)
+{
+	mps_context * ctx = mps_context_new ();
+	const char * c_path = env->GetStringUTFChars(path, NULL);
+	mps_polynomial *poly = mps_parse_file (ctx, c_path);
+	jobjectArray r;
+
+	r = solvePolynomial(env, javaThis, ctx, poly);
+
+	if (poly) {
+		mps_polynomial_free (ctx, poly);
+	}
+
+	mps_context_free (ctx);
+	env->ReleaseStringUTFChars(path, c_path);
+	return r;
+
+}
+

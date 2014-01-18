@@ -1,6 +1,9 @@
 package it.unipi.dm.mpsolve.android;
 
+import java.net.URISyntaxException;
+
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
@@ -19,6 +22,8 @@ public class MainActivity extends FragmentActivity {
 	public RootsAdapter rootsAdapter;
 	
 	private int currentPosition = 0;
+	
+	public static final int REQUEST_OPEN_POL_FILE = 1;
 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,9 +69,45 @@ public class MainActivity extends FragmentActivity {
 			Intent i = new Intent(this, SettingsActivity.class);
 			startActivity(i);
 			return true;
+		case R.id.action_load_file:
+			loadPolFile();
+			return true;
 		}
 		
 		return false;
+	}
+	
+	public void loadPolFile() {
+		// Ask the user to select a .pol file 
+		Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+		i.setType("file/*");
+		i.addCategory(Intent.CATEGORY_OPENABLE);
+		
+		startActivityForResult(i, REQUEST_OPEN_POL_FILE);
+	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		Log.d("MPSolve", "Request code = " + requestCode);
+		
+		switch (requestCode) {
+		
+		// Try to solve a polynomial defined by a .pol file. 
+		case REQUEST_OPEN_POL_FILE:
+			Uri uri = data.getData();
+			try {
+				String path = FileUtils.getPath(this, uri);
+				ApplicationData.startLoadingMessage(this, "Solving", 
+		    			"MPSolve is working, please wait..."); 
+				solver.solvePolynomialFile(this, path);
+			} catch (URISyntaxException e) {
+				Toast.makeText(this, "Cannot open the selected file", Toast.LENGTH_SHORT).show();
+				e.printStackTrace();
+			}
+			break;
+		}
+		
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 	
 	private void loadContent() {		

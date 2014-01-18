@@ -12,6 +12,9 @@ extern "C" {
 JNIEXPORT jobjectArray JNICALL Java_it_unipi_dm_mpsolve_android_PolynomialSolver_nativeSolvePolynomial
   (JNIEnv *, jobject, jstring);
 
+JNIEXPORT jobjectArray JNICALL Java_it_unipi_dm_mpsolve_android_PolynomialSolver_nativeSolvePolynomialFile
+  (JNIEnv *, jobject, jstring);
+
 #ifdef __cplusplus
 }
 #endif
