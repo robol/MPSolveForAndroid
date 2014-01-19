@@ -15,4 +15,12 @@
         android:defaultValue="@string/pref_digits_default"
         android:inputType="number" />
     
+    <ListPreference
+        android:key="pref_goal"
+        android:title="@string/pref_goal"
+        android:summary="@string/pref_goal_summ"
+        android:defaultValue="@string/pref_goal_default"
+        android:entries="@array/pref_goal_entries"
+        android:entryValues="@array/pref_goal_values" />
+    
 </PreferenceScreen>

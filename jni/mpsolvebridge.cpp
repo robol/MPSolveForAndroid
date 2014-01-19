@@ -19,6 +19,25 @@ jobjectArray solvePolynomial (JNIEnv * env, jobject javaThis, mps_context * ctx,
 					env->FindClass("it/unipi/dm/mpsolve/android/PolynomialSolver"),
 					"digits", "I"));
 
+	char c_goal = env->GetCharField(javaThis,
+			env->GetFieldID(
+					env->FindClass("it/unipi/dm/mpsolve/android/PolynomialSolver"),
+							"goal", "C"));
+
+	mps_output_goal goal = MPS_OUTPUT_GOAL_APPROXIMATE;
+
+	switch (c_goal) {
+	case 'i':
+		goal = MPS_OUTPUT_GOAL_ISOLATE;
+		break;
+	default:
+		__android_log_print(ANDROID_LOG_DEBUG, "MPSolve", "Unhandled goal options : %c",
+				c_goal);
+	case 'a':
+		goal = MPS_OUTPUT_GOAL_APPROXIMATE;
+		break;
+	}
+
 	jclass approximationClass = env->FindClass(
 			"it/unipi/dm/mpsolve/android/Approximation");
 
@@ -35,6 +54,7 @@ jobjectArray solvePolynomial (JNIEnv * env, jobject javaThis, mps_context * ctx,
 		mps_context_set_input_poly (ctx, poly);
 
 		mps_context_select_algorithm(ctx, alg);
+		mps_context_set_output_goal(ctx, goal);
 		mps_context_set_output_prec(ctx, digits * LOG2_10);
 
 		mps_context_add_debug_domain (ctx, MPS_DEBUG_TRACE);

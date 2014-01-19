@@ -25,5 +25,18 @@
     <string name="welcome_button_example">Solve x^70 - 2e4x^10 + 6/7</string>
     <string name="welcome_hint">&lt;b>Hint:&lt;/b> Navigate through the various views of the approximations by scrolling the pages left or right</string>
     <string name="action_load_file">Load .pol file</string>
-
+    
+    <!-- Preferences : pref_goal -->
+    <string name="pref_goal">Goal</string>
+    <string name="pref_goal_summ">Select the goal for the approximations</string>
+    <string-array name="pref_goal_entries">
+        <item>Approximation</item>
+        <item>Newton isolation</item>
+    </string-array>    
+    <string-array name="pref_goal_values">
+        <item>a</item>
+        <item>i</item>
+    </string-array>    
+    <string name="pref_goal_default">a</string>
+    
 </resources>

@@ -88,7 +88,6 @@ public class MainActivity extends FragmentActivity {
 	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Log.d("MPSolve", "Request code = " + requestCode);
 		
 		switch (requestCode) {
 		
@@ -156,8 +155,7 @@ public class MainActivity extends FragmentActivity {
     	onSolveButtonClicked(polyLineEdit);
     }
     
-    public void onSolveButtonClicked (View view) {     	
-    	Log.d("MPSolve", "User has asked to solve a polynomial");
+    public void onSolveButtonClicked (View view) {
     	
     	ApplicationData.startLoadingMessage(this, "Solving", 
     			"MPSolve is working, please wait...");

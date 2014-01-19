@@ -16,7 +16,7 @@ public class Settings {
 		SECSOLVE
 	}
 	
-	public enum Target {
+	public enum Goal {
 		APPROXIMATE,
 		ISOLATE
 	}
@@ -55,8 +55,32 @@ public class Settings {
 		return digits;
 	}
 	
+	public static Goal getGoal(Context context) {
+		SharedPreferences p = 
+				PreferenceManager.getDefaultSharedPreferences(context);
+		
+		try {
+			String goal_c = p.getString("pref_goal", "a");
+			
+			if (goal_c.equals("a")) {
+				target = Goal.APPROXIMATE;
+			}
+			else if (goal_c.equals("i")) {
+				target = Goal.ISOLATE;
+			}
+			else {
+				Log.d("MPSolve", "Unhandled string in pref_goal: " + goal_c);
+			}
+		} catch (Exception e) {
+			Log.d("MPSolve", "Exception while parsing pref_goal");
+			e.printStackTrace();
+		}
+		
+		return target;
+	}
+	
 	public static int digits = 10;
 	
-	public static Target target = Target.APPROXIMATE;
+	public static Goal target = Goal.APPROXIMATE;
 	
 }

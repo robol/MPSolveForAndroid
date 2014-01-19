@@ -26,6 +26,15 @@ public class PolynomialSolverTask extends AsyncTask<Object, Void, Approximation[
 		
 		caller.digits = Settings.getDigits(activity);
 		
+		switch (Settings.getGoal(activity)) {
+		case ISOLATE:
+			caller.goal = 'i';
+			break;
+		case APPROXIMATE:
+			caller.goal = 'a';
+			break;
+		}
+		
 		if (mode == "inline") {
 			return caller.nativeSolvePolynomial(polynomial);			
 		}  
