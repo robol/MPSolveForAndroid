@@ -37,13 +37,11 @@ public class RootsRendererView extends View {
 	public RootsRendererView(Context context) {
 		super(context);
 		initPaints();
-		Log.d("MPsolve", "called RootsRendererView(Context)");
 	}
 
 	public RootsRendererView(Context context, AttributeSet set) {
 		super(context, set);
-		initPaints();
-		Log.d("MPsolve", "called RootsRendererView(Context, AttributeSet)");	
+		initPaints();	
 	}
 	
 	public void setRootsAdapter (RootsAdapter adapter) {
