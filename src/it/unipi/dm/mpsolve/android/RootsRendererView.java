@@ -13,6 +13,8 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.PointF;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 
 /**
@@ -45,6 +47,13 @@ public class RootsRendererView extends View
 	private double scale = 1.0;
 	private double x_center = 0.0;
 	private double y_center = 0.0;
+	
+	private int pointSize = 4;
+	private int tickWidth = 2;
+	
+	private double x_axis_level;	
+	private double y_axis_level;
+	
 	
 	private DecimalFormat axisFormat;
 	
@@ -99,10 +108,26 @@ public class RootsRendererView extends View
 	}
 	
 	/** 
-	 * @brief Prepare the Paints for later user in the onDraw() method. 
+	 * @brief Prepare the Paints for later user in the onDraw() method.
+	 * 
+	 * Note that this method peform also some other basic initializations, such
+	 * as computing some sizes in a device-independent way and initializing
+	 * some String formatter. 
+	 * 
+	 *  As a rule of thumb, every expensive operation that does not need to
+	 *  be performed on every onDraw() call should be called here. 
 	 */
 	private void initPaints() {
 		axisFormat = new DecimalFormat("#.#E0");
+		
+		// Compute a Device independent point size
+		pointSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 
+				4, getResources().getDisplayMetrics());
+		
+		// ...and in the same spirit get a device independent width for the
+		// ticks that we will draw on the axis. 
+		tickWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 
+				3, getResources().getDisplayMetrics());
 		
 		// Paint used for the X and Y axis. 
 		axisPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -163,26 +188,36 @@ public class RootsRendererView extends View
 				if (i != markedPosition) {
 					Approximation p = adapter.roots[i];
 					PointF coords = approximationToLocalCoords(p);
-					canvas.drawCircle(coords.x, coords.y, 4, pointsPaint);
+					canvas.drawCircle(coords.x, coords.y, pointSize, pointsPaint);
 				}
 			}
 			
 			if (markedPosition >= 0) {
 				Approximation p = adapter.roots[markedPosition];
 				PointF coords = approximationToLocalCoords(p);
-				canvas.drawCircle(coords.x, coords.y, 4, markedPointsPaint);				
+				canvas.drawCircle(coords.x, coords.y, pointSize, markedPointsPaint);				
 			}
 		}
 		
 		// Draw the X and Y axis, possibly translated if it's not visible
+		computeAxisLevels();
 		drawXAxis(canvas);
 		drawYAxis(canvas);
 	}
 	
-	private void drawXAxis(Canvas canvas) {
-		float x_axis_level = (float) Math.max(0.0, y_center - .95 * scale * y_range);
+	private void computeAxisLevels() {
+		x_axis_level = (float) Math.max(0.0, y_center - .95 * scale * y_range);
 		x_axis_level = (float) Math.min(x_axis_level, y_center + .95 * scale * y_range);
 		
+		y_axis_level = (float) Math.max(0.0, x_center - .95 * scale * x_range);
+		y_axis_level = (float) Math.min(y_axis_level, x_center + .95 * scale * x_range);		
+	}
+	
+	/**
+	 * @brief Draw the X axis on the {@link View}. 
+	 * @param canvas The {@link Canvas} where the {@link View} is being drawn. 
+	 */	
+	private void drawXAxis(Canvas canvas) {
 		PointF start = pointToLocalCoords(x_center - .95 * x_range * scale, 
 				x_axis_level);
 		PointF end   = pointToLocalCoords(x_center + .95 * scale * x_range, 
@@ -195,28 +230,30 @@ public class RootsRendererView extends View
 		double center = Math.floor(x_center / step) * step;
 		for (double t = 0.0; t < .9 * scale * x_range; t += step) {
 			PointF tick = pointToLocalCoords(center + t, x_axis_level);			
-			canvas.drawLine(tick.x, tick.y - 2, tick.x, tick.y + 2, axisPaint);
-			if (t > 0.0) {
-				String text = axisFormat.format(center + t);
+			canvas.drawLine(tick.x, tick.y - tickWidth, tick.x, tick.y + tickWidth, axisPaint);
+			
+			String text = axisFormat.format(center + t);
+			if (Math.abs(center + t - y_axis_level) > .5 * step) {
 				canvas.drawText(text, tick.x - axisPaint.measureText(text) / 2, 
-						tick.y - 5, axisPaint);
+						tick.y - 2 * tickWidth, axisPaint);
 			}
 						
 			tick = pointToLocalCoords(center - t, x_axis_level);			
-			canvas.drawLine(tick.x, tick.y - 2, tick.x, tick.y + 2, axisPaint);
-			if (t > 0.0) {
-				String text = axisFormat.format(center - t);
+			canvas.drawLine(tick.x, tick.y - tickWidth, tick.x, tick.y + tickWidth, axisPaint);
+			text = axisFormat.format(center - t);			
+			if (Math.abs(center - t - y_axis_level) > .5 * step && t != 0.0) {
 				canvas.drawText(text, tick.x - axisPaint.measureText(text) / 2, 
-						tick.y - 5, axisPaint);
+						tick.y - 2 * tickWidth, axisPaint);
 			}
 						
 		}		
 	}
 	
+	/**
+	 * @brief Draw the Y axis on the {@link View}. 
+	 * @param canvas The {@link Canvas} where the {@link View} is being drawn. 
+	 */
 	private void drawYAxis(Canvas canvas) {
-		float y_axis_level = (float) Math.max(0.0, x_center - .95 * scale * x_range);
-		y_axis_level = (float) Math.min(y_axis_level, x_center + .95 * scale * x_range);
-		
 		PointF start = pointToLocalCoords(y_axis_level, 
 				y_center - .95 * scale * y_range);
 		PointF end   = pointToLocalCoords(y_axis_level, 
@@ -229,21 +266,31 @@ public class RootsRendererView extends View
 		double center = Math.floor(y_center / step) * step;
 		for (double t = 0.0; t < .9 * scale * y_range; t += step) {
 			PointF tick = pointToLocalCoords(y_axis_level, center + t);			
-			canvas.drawLine(tick.x - 2, tick.y,	tick.x + 2, tick.y, axisPaint);
-			if (t > 0.0)
-				canvas.drawText(axisFormat.format(center + t), tick.x + 5, 
+			canvas.drawLine(tick.x - tickWidth, tick.y,	tick.x + tickWidth, tick.y, axisPaint);
+			
+			if (Math.abs(center + t - x_axis_level) > .5 * step)
+				canvas.drawText(axisFormat.format(center + t), tick.x + 2 * tickWidth, 
 						tick.y + axisPaint.getTextSize() / 2, axisPaint);
 			
 			tick = pointToLocalCoords(y_axis_level, center - t);			
-			canvas.drawLine(tick.x - 2, tick.y,	tick.x + 2, tick.y, axisPaint);
-			if (t > 0.0)
-				canvas.drawText(axisFormat.format(center - t), tick.x + 5, 
+			canvas.drawLine(tick.x - tickWidth, tick.y,	tick.x + tickWidth, tick.y, axisPaint);
+			if (t != 0.0 && Math.abs(center - t - x_axis_level) > .5 * step)
+				canvas.drawText(axisFormat.format(center - t), tick.x + 2 * tickWidth, 
 						tick.y + axisPaint.getTextSize() / 2, axisPaint);
 		}
 	}
 	
+	/**
+	 * @brief Try to estimate a reasonable step between the ticks that
+	 * will be drawn on the axis. 
+	 * 
+	 * @param axisRange is the stretch factor of the axis for which we should compute
+	 * the scale. 
+	 * 
+	 * @return A (not so) wild guess of the reasonable step.  
+	 */
 	private double getAxisStep(double axisRange) {
-		double realScaleLog = Math.log10(axisRange);
+		double realScaleLog = Math.log10(axisRange) ;
 		double flooredValue = Math.floor(realScaleLog);
 		
 		double baseScale = Math.pow(10.0, flooredValue);
