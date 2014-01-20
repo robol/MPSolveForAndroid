@@ -11,16 +11,30 @@ import android.util.Log;
  */
 public class Settings {
 	
+	/**
+	 * @brief Algorithms available in MPSolve. 
+	 * @author Leonardo Robol <leo@robol.it>
+	 *
+	 */
 	public enum Algorithm {
 		UNISOLVE,
 		SECSOLVE
 	}
 	
+	/**
+	 * Computation goals available in MPSolve. 
+	 * @author Leonardo Robol <leo@robol.it>
+	 */
 	public enum Goal {
 		APPROXIMATE,
 		ISOLATE
 	}
 	
+	/**
+	 * @brief Retrieve the Algorithm currently selected in the preferences. 
+	 * @param context The current context. 
+	 * @return The {@link Algorithm} selected by the user. 
+	 */
 	public static Algorithm getAlgorithm(Context context) {
 		SharedPreferences p = 
 				PreferenceManager.getDefaultSharedPreferences(context);
@@ -41,6 +55,12 @@ public class Settings {
 		return Algorithm.SECSOLVE;
 	}
 	
+	/**
+	 * @brief Get the number of correct digits required by the user, and set
+	 * in preferences. 
+	 * @param context The curren Android context. 
+	 * @return an integer with the minimum number of correct digits required. 
+	 */
 	public static int getDigits(Context context) {
 		SharedPreferences p = 
 				PreferenceManager.getDefaultSharedPreferences(context);
@@ -55,6 +75,13 @@ public class Settings {
 		return digits;
 	}
 	
+	/**
+	 * @brief Retrieve the current {@link Goal} selected by the user in the
+	 * preferences. 
+	 * 
+	 * @param context The current Android context.
+	 * @return The {@link Goal} selected by the user. 
+	 */
 	public static Goal getGoal(Context context) {
 		SharedPreferences p = 
 				PreferenceManager.getDefaultSharedPreferences(context);
@@ -79,8 +106,6 @@ public class Settings {
 		return target;
 	}
 	
-	public static int digits = 10;
-	
-	public static Goal target = Goal.APPROXIMATE;
+	private static Goal target = Goal.APPROXIMATE;
 	
 }

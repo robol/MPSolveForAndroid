@@ -1,5 +1,10 @@
 package it.unipi.dm.mpsolve.android;
 
+/**
+ * @brief Public interface used to handle the Marked status of an approximation. 
+ * 
+ * @author Leonardo Robol <leo@robol.it>
+ */
 public interface MarkedCallbacks {
 	/**
 	 * @brief Called when the user select an approximation in the list. 

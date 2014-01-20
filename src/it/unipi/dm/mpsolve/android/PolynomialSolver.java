@@ -3,6 +3,14 @@ package it.unipi.dm.mpsolve.android;
 import android.content.Context;
 import android.util.Log;
 
+/**
+ * @brief This class is a small Java layer between the Application and
+ * MPSolve. It provides convenience functions to obtain approximations
+ * to the roots of a polynomial by means of {@link Approximation} objects. 
+ * 
+ * @author Leonardo Robol <leo@robol.it>
+ *
+ */
 public class PolynomialSolver {
 	
 	static {
@@ -45,6 +53,14 @@ public class PolynomialSolver {
 		new PolynomialSolverTask().execute(this, context, polynomial, "inline");
 	}
 	
+	/** 
+	 * Solve a polynomial described by a .pol file on the system.  
+	 * 
+	 * @param context is the MainActivity that has called the 
+	 * solver. 
+	 * @param path is the path to the .pol file that describes the 
+	 * polynomial to solve.  
+	 */	
 	public void solvePolynomialFile (Context context, String path) {
 		Log.d("MPSolve", "Solving .pol file with path = " + path);
 		new PolynomialSolverTask().execute(this, context, path, "file");

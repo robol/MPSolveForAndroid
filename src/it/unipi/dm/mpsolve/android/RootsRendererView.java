@@ -1,5 +1,7 @@
 package it.unipi.dm.mpsolve.android;
 
+import it.unipi.dm.mpsolve.android.ApplicationData.MarkedPositionChangedListener;
+
 import java.text.DecimalFormat;
 
 import android.content.Context;
@@ -13,6 +15,17 @@ import android.graphics.PointF;
 import android.util.AttributeSet;
 import android.view.View;
 
+/**
+ * @brief Custom {@link View} that renders the {@link Approximation} currently
+ * stored in the global {@link RootsAdapter}. 
+ * 
+ * As the name suggests, it's currently used in the {@link RootsRendererFragment}
+ * and implements the {@link MarkedPositionChangedListener} interface to be notified
+ * of the user selection in the {@link RootsListFragment}. 
+ * 
+ * @author Leonardo Robol <leo@robol.it>
+ *
+ */
 public class RootsRendererView extends View 
 	implements ApplicationData.MarkedPositionChangedListener {
 	
@@ -34,12 +47,21 @@ public class RootsRendererView extends View
 	private double y_center = 0.0;
 	
 	private DecimalFormat axisFormat;
-		
+	
+	/**
+	 * @brief Build a new RootsRendererView object. 
+	 * @param context The current Android context. 
+	 */
 	public RootsRendererView(Context context) {
 		super(context);
 		buildView();
 	}
 
+	/**
+	 * @brief Build a new RootsRendererView object. 
+	 * @param context The current Android context.
+	 * @param set The AttributeSet for the view.  
+	 */	
 	public RootsRendererView(Context context, AttributeSet set) {
 		super(context, set);
 		buildView();
@@ -50,7 +72,13 @@ public class RootsRendererView extends View
 		ApplicationData.registerMarkedPositionChangedListener(this);
 	}
 	
-	
+	/**
+	 * @brief Set (or replace) the RootsAdapter in this object. It also causes
+	 * a registration of a custom {@link DataSetObserver} so that this {@link View}
+	 * will be notified of the future changes in the {@link Approximation}. 
+	 * 
+	 * @param adapter The new {@link RootsAdapter}. 
+	 */
 	public void setRootsAdapter (RootsAdapter adapter) {
     	
     	if (observer != null)
@@ -97,6 +125,10 @@ public class RootsRendererView extends View
 		markedPointsPaint.setMaskFilter(new BlurMaskFilter (2, Blur.INNER));
 	}
 	
+	/**
+	 * @brief Recompute the necessary values to adapt the {@link View} to its
+	 * new size.
+	 */
 	@Override
 	public void onSizeChanged (int w, int h, int oldw, int oldh) {
 		width = w;
@@ -115,6 +147,11 @@ public class RootsRendererView extends View
 			inflatePoints(adapter.roots);
 	}
 	
+	/**
+	 * @brief Perform a draw operation on the given {@link Canvas}. 
+	 * @param canvas The 2D {@link Canvas} where the {@link Approximation} will be
+	 * rendered. 
+	 */
 	@Override
 	public void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
@@ -252,6 +289,8 @@ public class RootsRendererView extends View
      * This method should be called after altering the value of MainActivity.points
      * or when the WebView needs to reload the plot (for example after a layout
      * change). 
+     * 
+     * @param points The new points that should be drawn. 
      */
     public void inflatePoints(Approximation[] points) {
     	if (points == null)
@@ -294,6 +333,13 @@ public class RootsRendererView extends View
     	invalidate();
     }
 
+    /**
+     * @brief This method is called when the user change the selected
+     * position in the {@link RootsListFragment}. 
+     * 
+     * It will trigger an invalidate event on the {@link View} that will
+     * be re-drawn. 
+     */
 	@Override
 	public void onMarkedPositionChanged(int position) {
 		invalidate();
