@@ -33,6 +33,7 @@ jobjectArray solvePolynomial (JNIEnv * env, jobject javaThis, mps_context * ctx,
 	default:
 		__android_log_print(ANDROID_LOG_DEBUG, "MPSolve", "Unhandled goal options : %c",
 				c_goal);
+				/* no break */
 	case 'a':
 		goal = MPS_OUTPUT_GOAL_APPROXIMATE;
 		break;

@@ -5,9 +5,11 @@ import android.content.Context;
 import android.database.DataSetObserver;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 public class RootsAdapter implements ListAdapter {
@@ -55,7 +57,7 @@ public class RootsAdapter implements ListAdapter {
 	}
 
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+	public View getView(final int position, View convertView, final ViewGroup parent) {
 		View v = convertView;
 		
 		if (v == null) {
@@ -64,7 +66,7 @@ public class RootsAdapter implements ListAdapter {
 			v = inflater.inflate(R.layout.root_view, null);
 		}
 		
-		LinearLayout root = (LinearLayout) v.findViewById(R.id.rootViewRoot);
+		final LinearLayout root = (LinearLayout) v.findViewById(R.id.rootViewRoot);
 		
 		// Decide the color based on even odd positions. 
 		if (position % 2 == 0)
@@ -82,6 +84,26 @@ public class RootsAdapter implements ListAdapter {
 		
 		TextView statusText = (TextView) v.findViewById(R.id.statusText);
 		statusText.setText("Status: " + roots[position].status);
+		
+		v.setClickable(true);
+		v.setFocusable(true);
+		
+		final ListView listView = (ListView) parent;
+
+		// If we are child of a MainActivity chances are that there we are
+		// a marked approximation
+		if (ApplicationData.getMarkedPosition() == position) {
+			v.setBackgroundColor(context.getResources().getColor(
+					R.color.list_marked_background));
+		}
+		
+		v.setOnClickListener(new OnClickListener() {			
+			@Override
+			public void onClick(View v) {
+				listView.performItemClick(v, position, getItemId(position));
+				RootsAdapter.this.getView(position, v, parent);
+			}
+		});
 		
 		return v;
 	}

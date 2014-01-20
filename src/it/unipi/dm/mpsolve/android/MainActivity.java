@@ -7,14 +7,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity implements 
+	MarkedCallbacks {
 	
 	private PolynomialSolver solver = new PolynomialSolver();
 	
@@ -39,8 +39,7 @@ public class MainActivity extends FragmentActivity {
         if (savedInstanceState != null) {
         	currentPosition  = savedInstanceState.getInt("pagerPosition");
         	
-        	if (! Utils.isLandscape(this)) {
-    			Log.d("MPSolve", "Restoring pagerPosition = " + currentPosition);        		
+        	if (! Utils.isLandscape(this)) {      		
         		((ViewPager) findViewById(R.id.pager)).setCurrentItem(currentPosition, false);
         	}
         }
@@ -56,9 +55,8 @@ public class MainActivity extends FragmentActivity {
 		ViewPager pager = (ViewPager) findViewById(R.id.pager);
 		if (pager != null) {
 			currentPosition = pager.getCurrentItem();
-		}		
-
-		Log.d("MPSolve", "Saving current pagerPosition = " + currentPosition);
+		}
+		
 		outState.putInt("pagerPosition", currentPosition);
 	}
 	
@@ -168,6 +166,9 @@ public class MainActivity extends FragmentActivity {
     }
     	
     public void onPolynomialSolved (Approximation[] points) {
+    	// Fake a clear selection event since we are changing the polynomial. 
+    	onListItemSelected(-1);
+    	
     	this.points = points;
     	
     	ApplicationData.stopLoadingMessage();
@@ -192,5 +193,9 @@ public class MainActivity extends FragmentActivity {
 			}
     	}
     }
-        
+
+	@Override
+	public void onListItemSelected(int position) {
+		ApplicationData.setMarkedPosition(position);
+	}
 }

@@ -1,5 +1,6 @@
 package it.unipi.dm.mpsolve.android;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,8 +21,9 @@ public class RootsRendererFragment extends Fragment {
 			
 		RootsRendererView view = (RootsRendererView)
 				rootsRenderer.findViewById(R.id.rootsRendererView1);
+		Activity activity = getActivity();
 		
-		view.setRootsAdapter(ApplicationData.getRootsAdapter(getActivity()));
+		view.setRootsAdapter(ApplicationData.getRootsAdapter(activity));
 
 		return rootsRenderer;
 	}

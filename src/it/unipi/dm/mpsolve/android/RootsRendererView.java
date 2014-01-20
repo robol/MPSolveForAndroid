@@ -11,16 +11,17 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.PointF;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
-public class RootsRendererView extends View {
+public class RootsRendererView extends View 
+	implements ApplicationData.MarkedPositionChangedListener {
 	
 	private RootsAdapter adapter;
 	private DataSetObserver observer = null;
 	
 	private Paint axisPaint = null;
 	private Paint pointsPaint = null;
+	private Paint markedPointsPaint = null;
 	
 	private double width = 0;
 	private double height = 0;
@@ -36,13 +37,19 @@ public class RootsRendererView extends View {
 		
 	public RootsRendererView(Context context) {
 		super(context);
-		initPaints();
+		buildView();
 	}
 
 	public RootsRendererView(Context context, AttributeSet set) {
 		super(context, set);
-		initPaints();	
+		buildView();
 	}
+	
+	private void buildView () {
+		initPaints();		
+		ApplicationData.registerMarkedPositionChangedListener(this);
+	}
+	
 	
 	public void setRootsAdapter (RootsAdapter adapter) {
     	
@@ -79,7 +86,15 @@ public class RootsRendererView extends View {
 		pointsPaint.setColor(
 				getResources().getColor(R.color.rootsRendererView_points));
 		pointsPaint.setStyle(Style.FILL_AND_STROKE);
-		pointsPaint.setMaskFilter(new BlurMaskFilter(2, Blur.INNER));		
+		pointsPaint.setMaskFilter(new BlurMaskFilter(2, Blur.INNER));
+		
+		// Paint similar to the above, but used for points marked
+		// in the Approximation list. 
+		markedPointsPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+		markedPointsPaint.setColor(
+				getResources().getColor(R.color.rootsRendererView_MarkedPoints));
+		markedPointsPaint.setStyle(Style.FILL_AND_STROKE);
+		markedPointsPaint.setMaskFilter(new BlurMaskFilter (2, Blur.INNER));
 	}
 	
 	@Override
@@ -103,12 +118,22 @@ public class RootsRendererView extends View {
 	@Override
 	public void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
+		int markedPosition = ApplicationData.getMarkedPosition();
 		
 		// Draw the points
 		if (adapter.roots != null) {
-			for (Approximation p : adapter.roots) {
+			for (int i = 0; i < adapter.getCount(); i++) {
+				if (i != markedPosition) {
+					Approximation p = adapter.roots[i];
+					PointF coords = approximationToLocalCoords(p);
+					canvas.drawCircle(coords.x, coords.y, 4, pointsPaint);
+				}
+			}
+			
+			if (markedPosition >= 0) {
+				Approximation p = adapter.roots[markedPosition];
 				PointF coords = approximationToLocalCoords(p);
-				canvas.drawCircle(coords.x, coords.y, 4, pointsPaint);
+				canvas.drawCircle(coords.x, coords.y, 4, markedPointsPaint);				
 			}
 		}
 		
@@ -268,5 +293,10 @@ public class RootsRendererView extends View {
     	// Invalidate the View so the points will actually be shown on the plot. 
     	invalidate();
     }
+
+	@Override
+	public void onMarkedPositionChanged(int position) {
+		invalidate();
+	}
 
 }
