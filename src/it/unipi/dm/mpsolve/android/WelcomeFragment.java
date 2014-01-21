@@ -35,7 +35,12 @@ public class WelcomeFragment extends Fragment {
 		View mainView = inflater.inflate(R.layout.welcome, null);
 		
 		TextView hint = (TextView) mainView.findViewById(R.id.hint);
-		hint.setText(Html.fromHtml(getResources().getString(R.string.welcome_hint)));
+		
+		// If we are in Landscape mode the hint is not shown. 
+		if (hint != null) {
+			hint.setText(
+					Html.fromHtml(getResources().getString(R.string.welcome_hint)));
+		}
 		
 		return mainView;		
 	}
