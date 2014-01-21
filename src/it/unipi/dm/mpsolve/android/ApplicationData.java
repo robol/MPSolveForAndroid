@@ -8,7 +8,7 @@ import android.content.Context;
 /**
  * @brief This is a class holding all the static data used by MPSolve For Android. 
  * 
- * @author Leonardo Robo <leo@robol.it>
+ * @author Leonardo Robol <leo@robol.it>
  */
 public class ApplicationData {
 	
