@@ -31,9 +31,12 @@ public class Utils {
 	 * @return true if the tablet view is needed. 
 	 */
 	public static boolean tabletViewNeeded(Context c) {
+		Configuration configuration = c.getResources().getConfiguration();
+		int screenLayout = 
+				configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK;
+		
 		return isLandscape(c) && (
-				c.getResources().getConfiguration().screenLayout >=
-				Configuration.SCREENLAYOUT_SIZE_LARGE
+				screenLayout >= Configuration.SCREENLAYOUT_SIZE_LARGE
 				);
 	}
 

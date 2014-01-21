@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -133,8 +134,14 @@ public class MainActivity extends FragmentActivity implements
 	 *  screen of a small handset, so we should not use it in that case. 
 	 */
 	private void loadContent() {
-		if (Utils.tabletViewNeeded(this)) {
-			if (ApplicationData.getRootsAdapter(this).roots == null) {
+		if (Utils.isLandscape(this)) {
+			
+			// Inflate the WelcomeFragment or the RootsListFragment based
+			// on the presence of some Approximations and the need for a 
+			// Tablet-like view. 
+			if (Utils.tabletViewNeeded(this) &&
+					ApplicationData.getRootsAdapter(this).roots == null) {
+				Log.d("MainActivity", "Inflating Tablet view");
 				getSupportFragmentManager().beginTransaction().add(
 						R.id.fragmentLayoutLeft, 
 						new WelcomeFragment(), WelcomeFragment.TAG).commit(); 
