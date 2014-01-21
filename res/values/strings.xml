@@ -22,6 +22,7 @@
     <string name="pref_digits_default">10</string>
     <string name="welcome_to_mpsolve">Welcome to MPSolve!</string>
     <string name="instructions">You can solve a polynomial by entering some text above. \nFor example, try the following:</string>
+    <string name="instructions_land">You can solve a polynomial by entering some text above. \n\nFor example, try the following:</string>
     <string name="welcome_button_example">Solve x^70 &#8211; 2e4x^10 + 6/7</string>
     <string name="welcome_hint">&lt;b>Hint:&lt;/b> Navigate through the various views of the approximations by scrolling the pages left or right</string>
     <string name="action_load_file">Load .pol file</string>

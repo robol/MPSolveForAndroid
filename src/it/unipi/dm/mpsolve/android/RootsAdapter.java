@@ -150,7 +150,14 @@ public class RootsAdapter implements ListAdapter {
 			@Override
 			public void onClick(View v) {
 				listView.performItemClick(v, position, getItemId(position));
-				RootsAdapter.this.getView(position, v, parent);
+				
+				// TODO: A more efficient way of dealing with this would be to
+				// invalidate only this View and the previously focused one. 
+				// This could be obtained with
+				//  RootsAdapter.this.getView(position, v, parent); 
+				// combined with the analog instruction for the previously selected
+				// one. I don't know if it's worth the effort. 
+				listView.invalidateViews();
 			}
 		});
 		
