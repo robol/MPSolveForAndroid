@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
@@ -109,14 +110,40 @@ public class MainActivity extends FragmentActivity implements
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 	
-	private void loadContent() {		
-		// The list of Roots is needed only in case we are
-		// already in Landscape mode. Otherwise it will be
-		// loaded on demand as soon as the user flings left/right.
-		if (Utils.isLandscape(this)) {
-			getSupportFragmentManager().beginTransaction().add(
-					R.id.fragmentLayoutLeft,
-					new RootsListFragment(), RootsListFragment.TAG).commit();
+	/**
+	 * @brief Loads the content into the {@link View}. 
+	 * 
+	 * This function handles some configuration differences between devices.
+	 *  
+	 * Precisely: 
+	 *  - Potrait view is always rendered the same, using a {@link ViewPager} with
+	 *    all the {@link Fragment} in. 
+	 *  - Landscape view is rendered differently on small and big devices. On the 
+	 *    former only a {@link RootsListFragment} and a {@link RootsRendererFragment}
+	 *    are loaded side by side, while on the latter the {@link RootsListFragment} is
+	 *    replaced by the {@link WelcomeFragment}. 
+	 *    
+	 *  In the Landscape configuration the {@link WelcomeFragment} will be replaced
+	 *  as soon as the user solves a polynomial. See the function onPolynomialSolved(). 
+	 *  
+	 *  This is justified by the fact that most tablet users will open the application
+	 *  in Landscape mode while it is reasonable to expect that smartphone user won't. 
+	 *   
+	 *  Moreover, the {@link WelcomeFragment} is unlikely to fit the left half of the
+	 *  screen of a small handset, so we should not use it in that case. 
+	 */
+	private void loadContent() {
+		if (Utils.tabletViewNeeded(this)) {
+			if (ApplicationData.getRootsAdapter(this).roots == null) {
+				getSupportFragmentManager().beginTransaction().add(
+						R.id.fragmentLayoutLeft, 
+						new WelcomeFragment(), WelcomeFragment.TAG).commit(); 
+			}
+			else {
+				getSupportFragmentManager().beginTransaction().add(
+						R.id.fragmentLayoutLeft,
+						new RootsListFragment(), RootsListFragment.TAG).commit();
+			}
 			
 			getSupportFragmentManager().beginTransaction().add(
 					R.id.fragmentLayoutRight,
@@ -181,11 +208,19 @@ public class MainActivity extends FragmentActivity implements
     		rootsAdapter.setPoints(points);
     	}
     	
-    	// If the user is in Portrait mode, scroll to the first view
-    	// with a representation of the roots, if needed.
-    	// TODO: We should really handle this in the ViewPager by appropriately
-    	// subclassing it. This is left for the future. 
-    	if (! Utils.isLandscape(this)) {
+    	// If the user is in Landscape mode and the WelcomeFragment is still loaded, replace
+    	// it with the RootsListFragment. This only happens when the application is used
+    	// on a Tablet device (or a big enough one). 
+    	if (Utils.isLandscape(this)) {
+    		if (getSupportFragmentManager().findFragmentByTag(RootsListFragment.TAG) == null) {
+    			getSupportFragmentManager().beginTransaction().replace(
+    					R.id.fragmentLayoutLeft, 
+    					new RootsListFragment(), RootsListFragment.TAG).commit();
+    		}
+    	}
+    	else {
+    		// If the user is in Portrait mode, scroll to the first view
+        	// with a representation of the roots, if needed.
 			ViewPager pager = (ViewPager) findViewById(R.id.pager);
 			if (pager.getAdapter().getCount() == 3 &&
 					pager.getCurrentItem() == 0) {

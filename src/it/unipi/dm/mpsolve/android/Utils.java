@@ -22,5 +22,19 @@ public class Utils {
 		return c.getResources().getConfiguration()
 				.orientation == Configuration.ORIENTATION_LANDSCAPE;
 	}
+	
+	/**
+	 * @brief Check if we are on a big enough handset/tablet so that we
+	 * should enable the Tablet View for MPSolve. 
+	 * 
+	 * @param c A current Android {@link Context}. 
+	 * @return true if the tablet view is needed. 
+	 */
+	public static boolean tabletViewNeeded(Context c) {
+		return isLandscape(c) && (
+				c.getResources().getConfiguration().screenLayout >=
+				Configuration.SCREENLAYOUT_SIZE_LARGE
+				);
+	}
 
 }

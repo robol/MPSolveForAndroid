@@ -2,6 +2,7 @@ package it.unipi.dm.mpsolve.android;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,12 @@ import android.widget.TextView;
  * @author Leonardo Robol <leo@robol.it>
  */
 public class WelcomeFragment extends Fragment {
+	
+	/**
+	 * @brief This is the Tag that is used to register the {@link Fragment} into the
+	 * {@link FragmentManager}. 
+	 */
+	public static final String TAG = "WelcomeFragment";
 
 	/**
 	 * @brief Create the {@link View} required for this {@link Fragment}. 
