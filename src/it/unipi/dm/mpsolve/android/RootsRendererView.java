@@ -132,6 +132,8 @@ public class RootsRendererView extends View
 		axisPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		axisPaint.setColor(
 				getResources().getColor(R.color.rootsRendererView_axis));
+		axisPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 
+				12, getResources().getDisplayMetrics()));
 		
 		// Paint used for the points of the plot
 		pointsPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
