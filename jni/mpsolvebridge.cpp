@@ -100,16 +100,20 @@ jobjectArray solvePolynomial (JNIEnv * env, jobject javaThis, mps_context * ctx,
 
 			// Here we perform a basic filtering on the output. Real and imaginary
 			// parts should be truncated according to the radius computed.
-			if (realPartF >= 0) {
+			if (imagPartF >= 0) {
 			    gmp_sprintf (output, "%.*Fe + %.*Fei",
 			    		    neededRealDigits,
 			    		    mpc_Re (mvalue),
 			                neededImagDigits, mpc_Im (mvalue));
 			}
 			else {
-			    gmp_sprintf (output, "%.*Fe %.*Fei",
+				mpf_t flippedValue;
+				mpf_init2 (flippedValue, mpc_get_prec (mvalue));
+				mpf_mul_si (flippedValue, mpc_Im (mvalue), -1);
+			    gmp_sprintf (output, "%.*Fe - %.*Fei",
 			    		    neededRealDigits, mpc_Re (mvalue),
-			                neededImagDigits, mpc_Im (mvalue));
+			                neededImagDigits, flippedValue);
+			    mpf_clear (flippedValue);
 			}
 
 			jobject valueRepresentation = env->NewStringUTF(output);
