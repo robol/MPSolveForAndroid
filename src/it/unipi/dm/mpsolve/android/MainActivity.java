@@ -72,6 +72,10 @@ public class MainActivity extends FragmentActivity implements
 		case R.id.action_load_file:
 			loadPolFile();
 			return true;
+		case R.id.action_about:
+			Intent aboutIntent = new Intent(this, AboutActivity.class);
+			startActivity(aboutIntent);
+			return true;
 		}
 		
 		return false;

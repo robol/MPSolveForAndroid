@@ -40,4 +40,29 @@
     </string-array>    
     <string name="pref_goal_default">a</string>
     
+    <!-- Authors -->
+    <string name="leonardo_robol">Leonardo Robol  &lt;leo@robol.it&gt;</string>
+    <string name="dario_bini">Dario A. Bini &lt;bini@dm.unipi.it&gt;</string>
+    <string name="giuseppe_fiorentino">Giuseppe Fiorentino &lt;fiorent@dm.unipi.it&gt;</string>
+    
+    <!--  About dialog  -->
+    <string name="about_action">About MPSolve</string>
+    <string name="license_title">License</string>
+    <string name="mpsolveforandroid_authors">MPSolve for Android has been developed by: </string>
+    <string name="mpsolve_authors">MPSolve has been written by: </string>
+    <string name="mpsolve_about">MPSolve for Android and MPSolve are free software:
+you can redistribute them and/or modify
+them under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see http://www.gnu.org/licenses/.
+</string>
+    
 </resources>
