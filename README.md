@@ -8,9 +8,8 @@ steps:
 1. Download MPSolve from http://numpi.dm.unipi.it/mpsolve/. Unpack it in the same folder where
    the sources of MPSolveForAndroid are stored. 
 
-2. Use the script in tools/android-build-libmps.sh. Before launching set ```ANDROID_NDK_ROOT```
-   to the appropriate location. Build MPSolve for all the known architecture that you want in Android (by  
-   defaults these are arm, x86 and mips, along with their 64 bit versions). 
+2. Use the script in ```tools/android-build-libmps.sh```. Before launching set ```ANDROID_NDK_ROOT```
+   to the appropriate location. Build MPSolve for all the known architecture that you want in Android (by defaults these are arm, x86 and mips, along with their 64 bit versions). 
 
 3. If you do not have an updated it version of gradle, download it from https://gradle.org/. 
 
