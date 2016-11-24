@@ -19,7 +19,7 @@ steps:
    ndk.dir=/path/to/Android/Sdk/ndk-bundle
    sdk.dir=/path/to/Android/Sdk
    ```
- 5. Build the project using ```gradle```, by issuing the command ```gradle build```.
+5. Build the project using ```gradle```, by issuing the command ```gradle build```.
     
 ## Moving MPSolve
 
