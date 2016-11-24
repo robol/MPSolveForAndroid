@@ -16,14 +16,17 @@ steps:
 
 4. Configure the location of the Android Sdk and NDK. You can do this by setting the appropriate
    environment variables (```ANDROID_SDK_HOME``` and ```ANDROID_NDK_HOME```) or by creating a file
-  ````local.properties```  which contains the following lines: 
+  ````local.properties```  as report below. 
+5. Build the project using ```gradle```, by issuing the command ```gradle build```.
+
+
+Here is an example ```local.properties``` files. 
 ```
-# local.propreties
+# local.properties
 ndk.dir=/path/to/Android/Sdk/ndk-bundle
 sdk.dir=/path/to/Android/Sdk
 ```
 
-5. Build the project using ```gradle```, by issuing the command ```gradle build```.
     
 ## Moving MPSolve
 
