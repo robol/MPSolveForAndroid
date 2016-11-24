@@ -7,18 +7,22 @@ steps:
 
 1. Download MPSolve from http://numpi.dm.unipi.it/mpsolve/. Unpack it in the same folder where
    the sources of MPSolveForAndroid are stored. 
+
 2. Use the script in tools/android-build-libmps.sh. Before launching set ```ANDROID_NDK_ROOT```
    to the appropriate location. Build MPSolve for all the known architecture that you want in Android (by  
    defaults these are arm, x86 and mips, along with their 64 bit versions). 
+
 3. If you do not have an updated it version of gradle, download it from https://gradle.org/. 
+
 4. Configure the location of the Android Sdk and NDK. You can do this by setting the appropriate
    environment variables (```ANDROID_SDK_HOME``` and ```ANDROID_NDK_HOME```) or by creating a file
   ````local.properties```  which contains the following lines: 
-   ```
-   # local.propreties
-   ndk.dir=/path/to/Android/Sdk/ndk-bundle
-   sdk.dir=/path/to/Android/Sdk
-   ```
+```
+# local.propreties
+ndk.dir=/path/to/Android/Sdk/ndk-bundle
+sdk.dir=/path/to/Android/Sdk
+```
+
 5. Build the project using ```gradle```, by issuing the command ```gradle build```.
     
 ## Moving MPSolve
